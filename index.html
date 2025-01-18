@@ -110,6 +110,41 @@
       text-align: center;
       color: white;
     }
+  
+    /* Default font sizes for desktop */
+    h1 {/* Large heading */
+      margin: 0 0 10px 0;
+    }
+  
+    p {
+      font-size: 1.25rem;
+      margin: 0 20px;
+    }
+  
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem; /* Smaller heading */
+      }
+  
+      p {
+        font-size: 1rem; /* Smaller paragraph text */
+      }
+  
+      .text-content {
+        padding: 0 15px; /* Add padding for better alignment */
+      }
+    }
+  
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem; /* Smaller heading for very small screens */
+      }
+  
+      p {
+        font-size: 0.9rem; /* Smaller paragraph text */
+      }
+    }
   </style>
   
 
