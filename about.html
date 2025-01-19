@@ -3,122 +3,360 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
-  <meta content="width=device-width,initial-scale=1" name="viewport">
-  <meta content="description" name="description">
-  <meta name="google" content="notranslate" />
-  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me</title>
+  <link rel="stylesheet" href="/page.css">
+  <style>
 
-  <!-- Disable tap highlight on IE -->
-  <meta name="msapplication-tap-highlight" content="no">
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
-  <link href="./assets/favicon.ico" rel="icon">
-  
-  <title>Title page</title>  
+    .section {
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-<link href="./main.3da94fde.css" rel="stylesheet"></head>
+    .section h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .section p {
+      max-width: 600px;
+      margin: 0 auto 30px;
+      font-size: 1.1em;
+      line-height: 1.6;
+    }
+
+    .about-section {
+      background: linear-gradient(90deg, #e1f5fe, #fce4ec);
+    }
+
+    .about-section img {
+      border-radius: 50%;
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      margin-bottom: 20px;
+    }
+
+    .hobbies-section {
+  background: linear-gradient(90deg, #f3e5f5, #e3f2fd);
+  padding: 30px 20px;
+}
+
+.hobbies-list {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hobbies-item {
+  background-color: white;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 15px;
+  width:550px;
+}
+
+.hobbies-item img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border: 5px solid white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+}
+
+.hobbies-item p {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.hobbies-item p {
+  margin: 10px 0 5px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.hobbies-item small {
+  display: block;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+    .cta-section {
+      background: #333;
+      color: white;
+      padding: 30px 20px;
+    }
+
+    .cta-section h3 {
+      font-size: 2em;
+      margin-bottom: 15px;
+    }
+
+
+    /* General Dark Mode Styling */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .about-section {
+  background: linear-gradient(90deg, #2c2c2c, #3a3a3a);
+}
+
+body.dark-mode .hobbies-section {
+  background: linear-gradient(90deg, #2c2c2c, #3a3a3a);
+}
+
+body.dark-mode .hobbies-item {
+  background-color: #333;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+
+body.dark-mode .hobbies-item img {
+  border: 5px solid #555;
+}
+
+body.dark-mode .hobbies-item p {
+  color: #fff;
+}
+
+body.dark-mode .hobbies-item small {
+  color: #aaa;
+}
+
+body.dark-mode .cta-section {
+  background: #222;
+  color: #ddd;
+}
+
+
+button {
+    --color: #FF4081;
+  font-family: inherit;
+  display: inline-block;
+  width: 8em;
+  height: 2.6em;
+  line-height: 2.5em;
+  margin: 20px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border: 2px solid var(--color);
+  transition: color 0.5s;
+  z-index: 1;
+  font-size: 17px;
+  border-radius: 6px;
+  font-weight: 500;
+  color: var(--color);
+}
+
+button:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  background: var(--color);
+  height: 150px;
+  width: 200px;
+  border-radius: 50%;
+}
+
+button:hover {
+  color: #fff;
+}
+
+button:before {
+  top: 100%;
+  left: 100%;
+  transition: all 0.7s;
+}
+
+button:hover:before {
+  top: -30px;
+  left: -30px;
+}
+
+button:active:before {
+  background: #3a0ca3;
+  transition: background 0s;
+}
+
+/* Add transition for smooth theme change */
+body, 
+.about-section, 
+.hobbies-section, 
+.hobbies-item, 
+.cta-section {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.hobbies-item img {
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Optional: Add hover effect for hobbies images */
+.hobbies-item img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+    @media (max-width: 768px) {
+    .hobbies-list {
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .hobbies-item {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
+    }
+}
+
+  </style>
+</head>
 
 <body>
-
-<!-- Add your content of header -->
-
-<header>
-  <nav class="navbar navbar-fixed-top navbar-default">
-    <div class="container">
-        <button type="button" class="navbar-toggle">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        
-      <nav class="navbar-fullscreen" id="navbar-middle">
-        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <ul class="navbar-fullscreen-links">
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+        <div class="navbar-toggle" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="dark-mode-toggle-mobile" onclick="toggleDarkMode()" style="align-items: center; gap: 10px; cursor: pointer;">
+          <span id="darkModeText" style="color: #f7f9fc; font-family: 'Poppins', sans-serif;">Light Mode</span>
+          <div class="circle">
+            <div class="crescent"></div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
           <li><a href="./index.html" title="">Home</a></li>
-          <li><a href="./project.html" title="">Project</a></li>
           <li><a href="./about.html" title="">About me</a></li>
-          <li><a href="./components.html" title="">Components</a></li>
-        </ul>
-
-        <div class="footer-container">
-           
-          <p><small>© Untitled | Website created with <a href="http://www.mashup-template.com/" title="Create website with free html template">Mashup Template</a>/<a href="https://www.unsplash.com/" title="Beautiful Free Images">Unsplash</a></small></p>
-          <p class="footer-share-icons">
-              <a href="https://www.twitter.com" class="fa-icon" title="">
-                  <i class="fa fa-twitter" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.linkedin.com" class="fa-icon" title="">
-                  <i class="fa fa-instagram" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.behance.com" class="fa-icon" title="">
-                  <i class="fa fa-behance" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.vimeo.com" class="fa-icon" title="">
-                  <i class="fa fa-vimeo" aria-hidden="true"></i>
-              </a>
-          </p>
-                       
-        </div>
-
-
-      </nav> 
-    
-    </div>
-  </nav>
-</header>
-<div class="section-container content-container">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="col-md-6">
-                    <img src="./assets/images/img-profil.jpg" class="img-responsive" alt=""> 
-                </div>
-                <div class="col-md-6">
-                    <h1 class="h2">James Torres</h1>
-                    <p>Mi eget mauris pharetra et ultrices neque ornare. Pellentesque elit ullamcorper dignissim cras tincidunt
-                        lobortis. Euismod in pellentesque massa placerat. Consectetur libero id faucibus nisl tincidunt eget.
-                        Pulvinar etiam non quam lacus suspendisse. Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada.
-                        Ante in nibh mauris cursus mattis molestie a iaculis. Gravida cum sociis natoque penatibus et magnis
-                        dis parturient montes. Ultrices gravida dictum fusce ut placerat orci.</p>
-
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="mailto:myemail@myemail.com" title="" class="link-like-text">email</a>
-                        </li>
-                        <li>
-                            <a href="https://www.linkedin.com/" title="" class="link-like-text">linkedin</a>
-                        </li>
-                        <li>
-                            <a href="https://www.facebook.com/" title="" class="link-like-text">facebook</a>
-                        </li>
-                        <li>
-                            <a href="https://www.instagram.com/" title="" class="link-like-text">instagram</a>
-                        </li>
-                        <li>
-                            <a href="https://twitter.com/" title="" class="link-like-text">twitter</a>
-                        </li>
-                        <li>
-                            <a href="https://www.behance.net" title="" class="link-like-text">behance</a>
-                        </li>
-                    </ul>
-                </div>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+          <li class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
+            <div class="circle">
+              <div class="crescent"></div>
             </div>
-        </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-full-container">
+    <div class="overlay-gradient"></div>
+    <div class="text-content">
+      <h1>About Me</h1>
+      <p>Welcome to my personal space where I share my story, interests, and passions.</p>
     </div>
-</div>
+  </div>
 
+  <!-- About Section -->
+  <section class="section about-section">
+    <h2>Who Am I?</h2>
+    <img src="./assets/images/zul.png" alt="Profile Picture">
+    <p>
+      Hello! I'm Zulhelmi Afendi, a passionate developer and creative thinker. I specialize in crafting user-friendly digital
+      experiences and love turning ideas into reality.
+    </p>
+  </section>
 
+  <!-- Hobbies Section -->
+  <section class="section hobbies-section">
+    <h2>My Hobbies</h2>
+    <div class="hobbies-list">
+        <div class="hobbies-item">
+          <img src="./assets/images/hobby1.jpg" alt="Hobby 1">
+          <p>Photography</p>
+          <small>Capturing moments and telling stories through the lens.</small>
+        </div>
+        <div class="hobbies-item">
+          <img src="./assets/images/hobby2.jpg" alt="Hobby 2">
+          <p>Traveling</p>
+          <small>Exploring new places, cultures, and cuisines worldwide.</small>
+        </div>
+        <div class="hobbies-item">
+          <img src="./assets/images/hobby3.jpg" alt="Hobby 3">
+          <p>Coding</p>
+          <small>Building applications and solving problems with code.</small>
+        </div>
+      </div>
+      
+  </section>
 
+  <!-- Call-to-Action Section -->
+  <section class="section cta-section">
+    <h3>Want to Work Together?</h3>
+    <button onclick="location.href='./contact.html'">Contact Me</button>
+  </section>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function (event) {
-      navbarToggleSidebar();
-      closeMenuBeforeGoingToPage();
-      navActivePage();
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+
+      // Add a slight delay to text change for smoothness
+  setTimeout(() => {
+    document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+    document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+  }, 300);
+
+    }
+
+    function toggleMenu() {
+      const navbarNav = document.querySelector('.navbar-nav');
+      navbarNav.classList.toggle('open');
+    }
+
+    // Check for saved preference on page load
+    window.onload = () => {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeText').innerText = 'Dark Mode';
+        document.getElementById('darkModeText1').innerText = 'Dark Mode';
+      }
+    };
+
+    window.addEventListener('scroll', function () {
+      var navbar = document.querySelector('.navbar-fixed-top');
+      var heroSection = document.querySelector('.hero-full-container');
+
+      // Get the bottom position of the hero section
+      var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // If the user has scrolled past the hero section
+      if (window.pageYOffset > heroBottom) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
     });
-</script>
- <script type="text/javascript" src="./main.4c6e144e.js"></script></body>
+  </script>
+</body>
 
 </html>

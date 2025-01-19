@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Contact Me</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="/page.css">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f7f9fc;
+      color: #333;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Smooth Dark Mode Transition */
+    body.dark-mode {
+        background: #222;
+      color: #f7f9fc;
+      transition: background-color 0.5s ease, color 0.5s ease;
+    }
+
+    /* Navbar Styles */
+    .navbar-fixed-top {
+      background-color: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 10px 20px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      transition: background-color 0.5s ease;
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: center;
+      /* Center the navbar items */
+      align-items: center;
+      width: 100%;
+    }
+
+    .navbar-nav {
+      display: flex;
+      justify-content: center;
+      /* Center the list items */
+      align-items: center;
+      gap: 20px;
+      /* Space between items */
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .navbar-nav>li>a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease, transform 0.3s ease;
+      text-shadow: 1px 1px 3px black;
+      display: inline-block;
+    }
+
+    .navbar-nav>li>a:hover {
+      color: #007bff;
+      transform: scale(1.1);
+    }
+
+    .dark-mode .navbar-fixed-top {
+      background-color: transparent;
+    }
+
+    .dark-mode .navbar-nav>li>a {
+      color: #fff;
+      text-shadow: none;
+    }
+
+    .bar {
+      width: 25px;
+      height: 3px;
+      background-color: #fff;
+      margin: 5px 0;
+      transition: 0.4s;
+    }
+
+    .dark-mode .bar {
+      background-color: #fff;
+    }
+
+    /* Navbar becomes solid black after scrolling past hero section */
+    .navbar-fixed-top.scrolled {
+      background-color: black;
+    }
+
+    .dark-mode .navbar-fixed-top.scrolled {
+        padding-bottom: 10px; 
+      background-color: 111;
+    }
+
+    /* Hero Section */
+    .hero-full-container {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 0 20px;
+      color: white;
+      margin-top: 0;
+    }
+
+    .hero-full-container h1 {
+      margin-top: 0;
+    }
+
+    .hero-full-container::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      filter: blur(3px);
+    }
+
+    .overlay-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.8));
+    }
+
+    .text-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-full-container h1,
+    .hero-full-container p {
+      color: white;
+      text-shadow: 2px 2px 4px #000000;
+    }
+
+    .dark-mode .hero-full-container h1,
+    .dark-mode .hero-full-container p {
+      color: #f7f9fc;
+    }
+
+    /* Contact Section Styles */
+.contact-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.dark-mode .contact-section {
+  background-color: #333;
+  color: #fff;
+}
+
+.contact-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.dark-mode .contact-section h2 {
+  color: #fff;
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 600;
+}
+
+.dark-mode .contact-form label {
+  color: #fff;
+}
+
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+  max-width: 800px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.dark-mode .contact-form input[type="text"],
+.dark-mode .contact-form input[type="email"],
+.dark-mode .contact-form textarea {
+  background-color: #444;
+  color: #fff;
+  border-color: #666;
+}
+
+.contact-form textarea {
+  height: 150px;
+}
+
+.contact-form button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #2b4c7e;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.contact-form button:hover {
+  background-color: #3f68a0;
+}
+
+.dark-mode .contact-form button {
+  background-color: #8983F7;
+}
+
+.dark-mode .contact-form button:hover {
+  background-color: #A3DAFB;
+}
+
+/* Contact Info Styles */
+.contact-info {
+  margin-top: 40px;
+}
+
+.contact-info h3 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.dark-mode .contact-info h3 {
+  color: #fff;
+}
+
+/* Links in contact info */
+.contact-info a {
+  color: #2b4c7e; /* Default color for links */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+  color: #3f68a0; /* Hover effect for links */
+}
+
+/* Dark mode specific styles */
+.dark-mode .contact-info a {
+  color: #A3DAFB; /* Light blue for dark mode links */
+}
+
+.dark-mode .contact-info a:hover {
+  color: #FFFFFF; /* Bright white when hovered */
+}
+
+
+.info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.info-item i {
+  font-size: 24px;
+  color: #2b4c7e;
+  margin-right: 15px;
+}
+
+.dark-mode .info-item i {
+  color: #8983F7;
+}
+
+.info-item p {
+  margin: 0;
+  color: #333;
+}
+
+.dark-mode .info-item p {
+  color: #fff;
+}
+
+    /* Dark Mode Button Styles */
+    .dark-mode-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .circle {
+      position: relative;
+      border-radius: 100%;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(40deg, #FF0080, #FF8C00 70%);
+      margin-left: 10px;
+      transition: background 0.3s ease;
+    }
+
+    /* Crescent Styles */
+    .crescent {
+      position: absolute;
+      border-radius: 100%;
+      right: 0%;
+      top: 40%;
+      transform: translateY(-50%) scale(0);
+      width: 30px;
+      height: 30px;
+      background: #222;
+      transform-origin: top right;
+      transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    .dark-mode .crescent {
+      transform: translateY(-50%) scale(1);
+    }
+
+    .dark-mode .circle {
+      background: linear-gradient(40deg, #8983F7, #A3DAFB 70%);
+    }
+
+    /* Hamburger Menu Styles */
+    .navbar-toggle {
+      display: none;
+      /* Hide by default on larger screens */
+      cursor: pointer;
+      position: absolute;
+      top: 20px;
+      /* Position it to the left */
+      left: 20px;
+      /* Adjust as needed */
+    }
+
+    /* Skill Icon Styles */
+    .skill-icon i {
+      color: #2b4c7e;
+      transition: color 0.3s ease;
+    }
+
+    /* Change icon color to white in dark mode */
+    .dark-mode .skill-icon i {
+      color: #fff;
+    }
+
+    .contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Fix overflow */
+    font-family: 'Poppins', sans-serif;
+}
+
+.contact-form textarea {
+    min-height: 100px;
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.dark-mode-toggle-mobile{
+    display: none;
+}
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .dark-mode-toggle-mobile{
+            display: flex;
+            position: fixed;
+            right: 20px;
+            top: 15px;
+        }
+
+        .navbar-fixed-top.scrolled {
+      background-color: black;
+      padding-bottom: 60px;
+    }
+
+    .dark-mode .navbar-fixed-top.scrolled {
+      background-color: black;
+      padding-bottom: 60px;
+    }
+
+        .dark-mode-toggle{
+            display: none;
+        }
+
+
+        .navbar-nav {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+    position: absolute;
+    top: 0px; /* Adjust based on navbar height */
+    width: 100%;
+    background-color: #222;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    display: none; /* Hide by default on smaller screens */
+  }
+
+      .navbar-nav.open {
+        display: flex;
+        padding: 20px;
+      }
+
+      .navbar-toggle {
+        display: block;
+        z-index: 20;
+      }
+
+      .dark-mode .navbar-nav {
+        background-color: #222;
+      }
+
+      .navbar-nav .dark-mode-toggle {
+        margin-left: 20px;
+      }
+
+      h1 {
+        font-size: 4rem;
+      }
+
+      p {
+        font-size: 2rem;
+      }
+
+      .text-content {
+        padding: 0 15px;
+      }
+
+      /* For Icon */
+      .contact-info {
+    display: flex;
+    justify-content: space-around; /* Distribute items evenly */
+    align-items: center;
+    margin-top: 30px; /* Adjust margin for smaller screens */
+  }
+
+  .contact-info h3 {
+    padding-bottom: 12px;
+  }
+
+  .info-item a {
+    display: flex; /* Make the link a flex container */
+    align-items: center; /* Center the icon vertically */
+    justify-content: center; /* Center the icon horizontally */
+    width: 100%; /* Make the link take up the full width of its parent */
+    color: inherit; /* Inherit color from parent (for dark mode compatibility) */
+    text-decoration: none; /* Remove default link underline */
+  }
+
+  .info-item i {
+      margin-right: 0;
+      margin-bottom: 0; /* Remove margin-bottom */
+      font-size: 30px;
+    }
+
+  .info-item p {
+    display: none; /* Hide the text on mobile */
+  }
+
+  .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea {
+        max-width: 768px;
+    }
+
+    }
+
+    @media (max-width: 480px) {
+      .skill-card {
+        width: calc(100% - 20px);
+      }
+
+      .navbar-fixed-top {
+        padding: 0%;
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+
+      p {
+        font-size: 1.5rem;
+      }
+
+      .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea {
+        max-width: 480px;
+    }
+
+    }
+
+
+  </style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+        <div class="navbar-toggle" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="dark-mode-toggle-mobile" onclick="toggleDarkMode()" style=" align-items: center; gap: 10px; cursor: pointer;">
+            <span id="darkModeText" style="color: #f7f9fc; font-family: 'Poppins', sans-serif;">Light Mode</span>
+            <div class="circle">
+                <div class="crescent"></div>
+            </div>
+        </div>
+        
+        <ul class="navbar-nav">
+          <li><a href="./index.html" title="">Home</a></li>
+          <li><a href="./about.html" title="">About me</a></li>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+          <li class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
+            <div class="circle">
+              <div class="crescent"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-full-container">
+    <div class="overlay-gradient"></div>
+    <div class="text-content">
+      <h1>Get in Touch</h1>
+      <p>I'd love to hear from you! Whether you have a project in mind, a question, or just want to say hello, feel free
+        to reach out.</p>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <section class="contact-section">
+    <h2>Contact Me</h2>
+    <form class="contact-form" action="#" method="post">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" required></textarea>
+
+      <button type="submit">Send Message</button>
+    </form>
+
+    <div class="contact-info">
+        <h3>Other Ways to Connect</h3>
+        <div class="info-item">
+          <a href="mailto:your.zulhelmiafendi@gmail.com" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-envelope"></i>
+          </a>
+          <p>Email : <a href="mailto:your.zulhelmiafendi@gmail.com">zulhelmiafendi@gmail.com</a></p>
+        </div>
+        <div class="info-item">
+          <a href="https://www.linkedin.com/in/zulhelmi-afendi/" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <p>LinkedIn : <a href="https://www.linkedin.com/in/zulhelmi-afendi/" target="_blank">linkedin.com/in/zulhelmi-afendi</a>
+          </p>
+        </div>
+        <div class="info-item">
+          <a href="https://github.com/zulbiasa" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-github"></i>
+          </a>
+          <p>GitHub : <a href="https://github.com/zulbiasa" target="_blank">github.com/zulbiasa</a></p>
+        </div>
+      </div>
+  </section>
+
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+    }
+
+    function toggleMenu() {
+      const navbarNav = document.querySelector('.navbar-nav');
+      navbarNav.classList.toggle('open');
+    }
+
+    // Check for saved preference on page load
+    window.onload = () => {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeText').innerText = 'Dark Mode';
+        document.getElementById('darkModeText1').innerText = 'Dark Mode';
+      }
+    };
+
+    window.addEventListener('scroll', function () {
+      var navbar = document.querySelector('.navbar-fixed-top');
+      var heroSection = document.querySelector('.hero-full-container');
+
+      // Get the bottom position of the hero section
+      var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // If the user has scrolled past the hero section
+      if (window.pageYOffset > heroBottom) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+
+</html>

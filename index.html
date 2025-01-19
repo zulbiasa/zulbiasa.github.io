@@ -7,193 +7,49 @@
   <meta content="width=device-width,initial-scale=1" name="viewport">
   <meta content="description" name="description">
   <meta name="google" content="notranslate" />
-  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+  <meta content="My Portfolio" name="Zulhelmi Afendi">
 
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
 
   <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
   <link href="./assets/favicon.ico" rel="icon">
+  <link rel="stylesheet" href="page.css">
 
-  <title>Title page</title>
-
-  <link href="./main.3da94fde.css" rel="stylesheet">
-
-  <style>
-    /* Make the navbar transparent */
-    .navbar-fixed-top {
-      background-color: transparent;
-      border: none; /* Remove any border */
-      box-shadow: none; /* Remove any shadow */
-    }
-  
-    /* Remove body padding to allow full-screen image */
-    body {
-      padding-top: 0; /* Remove padding */
-      margin: 0; /* Ensure no margins around the page */
-    }
-  
-    /* Ensure navbar content doesn't overlap image */
-    .navbar-fixed-top .container {
-      background-color: transparent;
-    }
-  
-    .navbar-fixed-top .navbar-nav > li > a {
-      color: white; /* Adjust link color for visibility */
-      text-shadow: 1px 1px 3px black; /* Add text shadow for contrast */
-    }
-  
-    /* Hide the hamburger menu */
-    .navbar-toggle {
-      display: none !important;
-    }
-  
-    /* Always show the full menu */
-    .navbar-collapse.collapse {
-      display: block !important;
-    }
-  
-    .navbar-nav {
-      float: none !important;
-      display: flex;
-      justify-content: space-around;
-    }
-  
-    .navbar-nav > li {
-      float: none;
-      display: inline-block;
-    }
-  
-    .navbar-nav > li > a {
-      padding: 10px 15px;
-      color: white;
-      text-shadow: 1px 1px 3px black;
-    }
-  
-    /* Make the hero image full screen */
-    .hero-full-container {
-      position: relative;
-      height: 100vh; /* Full viewport height */
-      width: 100vw; /* Full viewport width */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-  
-    .hero-full-container::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('./assets/images/img-home.jpg'); /* Replace with your image path */
-      background-size: cover; /* Ensures the image covers the whole section */
-      background-position: center; /* Centers the image */
-      background-repeat: no-repeat; /* Prevents tiling */
-      z-index: -1; /* Places it behind content */
-    }
-  
-    .hero-full-container .overlay-gradient {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
-      z-index: 0; /* Overlay behind text but above the image */
-    }
-  
-    .hero-full-container .text-content {
-      z-index: 1; /* Ensure text is above overlay */
-      text-align: center;
-      color: white;
-    }
-  
-    /* Default font sizes for desktop */
-    h1 {/* Large heading */
-      margin: 0 0 10px 0;
-    }
-  
-    p {
-      font-size: 1.25rem;
-      margin: 0 20px;
-    }
-  
-    /* Responsive adjustments for smaller screens */
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 2rem; /* Smaller heading */
-      }
-  
-      p {
-        font-size: 1rem; /* Smaller paragraph text */
-      }
-  
-      .text-content {
-        padding: 0 15px; /* Add padding for better alignment */
-      }
-    }
-  
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.5rem; /* Smaller heading for very small screens */
-      }
-  
-      p {
-        font-size: 0.9rem; /* Smaller paragraph text */
-      }
-    }
-  </style>
-  
-
+  <title>Home page</title>
 </head>
 
 <body>
+  <!-- Navbar -->
   <header>
-    <nav class="navbar navbar-fixed-top navbar-default">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+        <div class="navbar-toggle" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
         </div>
-
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-          <ul class="nav navbar-nav ">
-            <li><a href="./index.html" title="">Home</a></li>
-            <li><a href="./index.html" title="">Skill</a></li>
-            <li><a href="./index.html" title="">Contact</a></li>
-            <li><a href="./project.html" title="">Project</a></li>
-            <li><a href="./about.html" title="">About me</a></li>
-          </ul>
-        </div>
+        
+        <ul class="navbar-nav">
+          <li><a href="./index.html" title="">Home</a></li>
+          <li><a href="./about.html" title="">About me</a></li>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+        </ul>
       </div>
     </nav>
   </header>
 
-  <div class="hero-full-container background-image-container white-text-container"
-    style="background-image:url('./assets/images/img-home.png')">
+  <!-- Hero Section -->
+  <div class="hero-full-container">
     <div class="overlay-gradient"></div>
-    <div class="container">
-      <div class="row">
-        <div class="col-xs-12 col-md-7 col-md-offset-1">
-          <div class="hero-full-wrapper">
-            <div class="text-content">
-              <h1>Zulhelmi Afendi</h1>
-              <p>Embarking on an exciting journey into the world of Software Development. Fueled by curiosity, driven by creativity, and ready to turn ideas into impactful solutions!</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="text-content">
+      <h1>Zulhelmi Afendi</h1>
+      <p>Embarking on an exciting journey into the world of Software Development. Fueled by curiosity, driven by creativity, and ready to turn ideas into impactful solutions!</p>
     </div>
   </div>
-
-  <script type="text/javascript" src="./main.4c6e144e.js"></script>
 </body>
 
 </html>

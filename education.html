@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Education & Experience</title>
+  <link rel="stylesheet" href="/page.css">
+  <style>
+    /* Section Styling */
+.section {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 2em;
+    margin-bottom: 30px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 20px;
+        margin-left: 0; /* Remove left margin for smaller screens */
+    }
+
+    .timeline-line {
+        left: 50px; /* Adjust for smaller screens */
+    }
+
+    .timeline-item {
+        width: 90%; /* Make items wider on smaller screens */
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    h2 {
+        font-size: 1.5em; /* Adjust heading size for smaller screens */
+    }
+
+    small {
+        font-size: 0.8em; /* Smaller font size for small text */
+    }
+
+    button {
+        width: 100%; /* Make buttons full width on mobile */
+        padding: 15px; /* Increase padding for better touch targets */
+        font-size: 1.2em; /* Increase font size for readability */
+    }
+}
+
+small {
+    display: block;
+    color: gray;
+    margin-top: 10px;
+}
+
+.cta-section {
+    background: #FF4081;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+button {
+    background: white;
+    color: #FF4081;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Hidden State (Before Animation) */
+.hidden {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 1s ease-out;
+}
+
+/* Visible State (After Animation) */
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.education-progress {
+    text-align: center;
+    position: relative;
+}
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    position: relative;
+    margin-left: 40px;
+}
+
+.timeline-line {
+  position: absolute;
+  top: 0;
+  left: 70px;
+  width: 2px;
+  height: 100%;
+  background-color: transparent;
+  z-index: -1;
+  border-left: 2px dashed #FF4081; /* Add dashed line style */
+}
+
+/* Dotted line at the end */
+.timeline-line::after {
+    content: '';
+    position: absolute;
+    bottom: 0; /* Position it at the bottom of the timeline */
+    left: -10px; /* Adjust as needed */
+    width: 2px; /* Same width as the main line */
+    height: 20px; /* Height of the dotted part */
+    border-left: 2px dotted #FF4081; /* Dotted line */
+    opacity: 0; /* Start hidden */
+    animation: fadeOut 1s forwards; /* Fade out animation */
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.timeline-item {
+    background-color: #f4f4f4;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    width: 80%;
+    text-align: left;
+    position: relative;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.timeline-item .dot {
+    position: absolute;
+    top: 38px;
+    left: -40px; /* Ensures the dot aligns perfectly with the line */
+    width: 18px; /* Slightly larger for better visibility */
+    height: 18px;
+    background-color: #FF4081; /* Matches line color */
+    border: 2px solid white;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-item.completed .dot {
+    background-color: #4caf50;
+}
+
+.timeline-item.active .dot {
+    background-color: #2196f3;
+    animation: blink 1s infinite; /* Add blinking effect */
+}
+
+.timeline-item.completed {
+    border-left: 5px solid #4caf50;
+}
+
+.timeline-item.active {
+    border-left: 5px solid #2196f3;
+    background: linear-gradient(90deg, #e1f5fe, #bbdefb);
+}
+
+.timeline-item .current-status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 10px;
+    background-color: #2196f3;
+    color: white;
+    border-radius: 5px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Blinking Effect */
+@keyframes blink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+button {
+    --color: #aa1d4c;
+    font-family: inherit;
+    display: inline-block;
+    width: 8em;
+    height: 3em;
+    margin-bottom: 20px;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border: 2px solid var(--color);
+    transition: color 0.5s;
+    z-index: 1;
+    font-size: 17px;
+    border-radius: 6px;
+    font-weight: 500;
+    color: var(--color);
+}
+
+button:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: var(--color);
+    height: 150px;
+    width: 200px;
+    border-radius: 50%;
+}
+
+button:hover {
+    color: #fff;
+}
+
+button:before {
+    top: 100%;
+    left: 100%;
+    transition: all 0.7s;
+}
+
+button:hover:before {
+    top: -30px;
+    left: -30px;
+}
+
+button:active:before {
+    background: #3a0ca3;
+    transition: background 0s;
+}
+
+/* Additional Responsive Adjustments */
+@media (max-width: 768px) {
+    .timeline {
+        padding-left: 20px;
+        margin-left: 0; /* Remove left margin for smaller screens */
+    }
+
+    .timeline-line {
+      left: 21px;
+      border-left: none;
+      border-right: 2px dashed #ff4081;
+    }
+
+    .timeline-item .dot {
+      left: -47px;
+    }
+
+    .timeline-item {
+        width: 90%; /* Make items wider on smaller screens */
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    h2 {
+        font-size: 1.5em; /* Adjust heading size for smaller screens */
+    }
+
+    small {
+        font-size: 0.8em; /* Smaller font size for small text */
+    }
+}
+
+@media (max-width: 480px) {
+    h2 {
+        font-size: 1.2em; /* Further adjust heading size for very small screens */
+    }
+
+    button {
+        font-size: 1em; /* Adjust button font size for very small screens */
+    }
+}
+
+body.dark-mode .timeline-item {
+    background-color: #333; /* Darker background for dark mode */
+    border-color: #666; /* Darker border for dark mode */
+    color: #eee; /* Lighter text for readability in dark mode */
+}
+
+body.dark-mode .timeline-line {
+    background-color: #666; /* Darker line in dark mode */
+}
+
+body.dark-mode .timeline-item .current-status {
+    background-color: #FF4081; /* Highlight color in dark mode */
+    color: #fff;
+}
+
+body.dark-mode .timeline-item .dot {
+    border-color: #333; /* Darker border for the dot in dark mode */
+}
+
+body.dark-mode .timeline-item.active {
+    background: linear-gradient(90deg, #333, #555); /* Subtle gradient in dark mode */
+}
+
+body.dark-mode .timeline-item.completed {
+    border-left-color: #4caf50; /* Same border color in dark mode */
+}
+
+body.dark-mode .timeline-item.active {
+    border-left-color: #FF4081; /* Active border color in dark mode */
+}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+        <div class="navbar-toggle" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="dark-mode-toggle-mobile" onclick="toggleDarkMode()" style="align-items: center; gap: 10px; cursor: pointer;">
+          <span id="darkModeText" style="color: #f7f9fc; font-family: 'Poppins', sans-serif;">Light Mode</span>
+          <div class="circle">
+            <div class="crescent"></div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
+          <li><a href="./index.html" title="">Home</a></li>
+          <li><a href="./about.html" title="">About me</a></li>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+          <li class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
+            <div class="circle">
+              <div class="crescent"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-full-container">
+    <div class="overlay-gradient"></div>
+    <div class="text-content">
+      <h1>Education & Experience</h1>
+      <p>Explore my academic background and professional journey that have shaped my skills and expertise.</p>
+    </div>
+  </div>
+
+  <!-- Education Section -->
+  <section class="section education-progress">
+    <h2>My Education Journey</h2>
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      <div class="timeline-item active hidden">
+        <div class="dot"></div>
+        <h3>Universiti Teknikal Malaysia Melaka (UTeM), Melaka</h3>
+        <p>Bachelor's in Software Engineering</p>
+        <small>2023 - Present</small>
+        <span class="current-status">Currently Studying</span>
+      </div>
+      <div class="timeline-item completed hidden">
+        <div class="dot"></div>
+        <h3>Politeknik Seberang Perai, Pulau Penang</h3>
+        <p>Diploma Digital Technology</p>
+        <small>2020 - 2022</small>
+      </div>
+      <div class="timeline-item completed hidden">
+        <div class="dot"></div>
+        <h3>SMK Yam Tuan Radin, Negeri Sembilan</h3>
+        <p>Science Stream (SPM)</p>
+        <small>2018 - 2019</small>
+      </div>
+    </div>
+  </section>
+  
+  
+  <!-- Experience Section -->
+<section class="section experience-section">
+    <h2>Experience</h2>
+    <div class="timeline">
+      <div class="timeline-item hidden completed">
+        <div class="timeline-content">
+          <h3>Sigma Rectrix Sdn. Bhd., Cyberjaya</h3>
+          <p>Software Technician</p>
+          <ul>
+            <li>Provided on-site support by troubleshooting and resolving issues related to company PCs loaned to government-linked agencies.</li>
+            <li>Collaborated with a team to implement secure APIs and improve overall system functionality.</li>
+            <li>Enhanced the performance of existing applications by 20% through various optimizations.</li>
+          </ul>
+          <small>March 2023 - August 2023</small>
+        </div>
+      </div>
+      <div class="timeline-item hidden completed">
+        <div class="timeline-content">
+          <h3>Internship at Sigma Rectrix Sdn. Bhd., Cyberjaya</h3>
+          <p>Software Technician</p>
+          <ul>
+            <li>Assisted in troubleshooting and resolving hardware and software issues for government agency PCs.</li>
+            <li>Helped improve the performance and functionality of various client applications.</li>
+          </ul>
+          <small>October 2022 - March 2023</small>
+        </div>
+      </div>
+      <div class="timeline-item hidden completed">
+        <div class="timeline-content">
+          <h3>Petronas Lukut</h3>
+          <p>Pump Attendance</p>
+          <ul>
+            <li>Monitored fuel levels and ensured smooth operations of the pumps.</li>
+            <li>Provided excellent customer service and assistance to clients.</li>
+          </ul>
+          <small>January 2022 - February 2022</small>
+        </div>
+      </div>
+      <div class="timeline-item hidden completed">
+        <div class="timeline-content">
+          <h3>KFC Lukut</h3>
+          <p>Cashier</p>
+          <ul>
+            <li>Handled transactions and provided customer service in a fast-paced environment.</li>
+            <li>Managed orders and ensured timely delivery of food to customers.</li>
+          </ul>
+          <small>December 2019 - January 2022</small>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  
+  <!-- Call-to-Action -->
+  <section class="cta-section">
+    <h3>Want to collaborate or learn more?</h3>
+    <button onclick="window.location.href='./contact.html'">Contact Me</button>
+  </section>
+
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+
+      // Add a slight delay to text change for smoothness
+  setTimeout(() => {
+    document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+    document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+  }, 300);
+
+    }
+
+    function toggleMenu() {
+      const navbarNav = document.querySelector('.navbar-nav');
+      navbarNav.classList.toggle('open');
+    }
+
+    // Check for saved preference on page load
+    window.onload = () => {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeText').innerText = 'Dark Mode';
+        document.getElementById('darkModeText1').innerText = 'Dark Mode';
+      }
+    };
+
+    window.addEventListener('scroll', function () {
+      var navbar = document.querySelector('.navbar-fixed-top');
+      var heroSection = document.querySelector('.hero-full-container');
+
+      // Get the bottom position of the hero section
+      var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // If the user has scrolled past the hero section
+      if (window.pageYOffset > heroBottom) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Function to check if an element is in the viewport
+function isInViewport(element) {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight)
+  );
+}
+
+// Apply animation when elements are scrolled into view
+function animateTimelineItems() {
+  const timelineItems = document.querySelectorAll('.timeline-item');
+
+  timelineItems.forEach(item => {
+    if (isInViewport(item)) {
+      item.classList.add('visible');
+    }
+  });
+}
+
+// Event listeners
+window.addEventListener('scroll', animateTimelineItems);
+window.addEventListener('load', animateTimelineItems); // For initial load
+
+  </script>
+
+</body>
+</html>

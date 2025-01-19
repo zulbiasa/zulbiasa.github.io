@@ -1,189 +1,222 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta content="IE=edge" http-equiv="X-UA-Compatible">
-  <meta content="width=device-width,initial-scale=1" name="viewport">
-  <meta content="description" name="description">
-  <meta name="google" content="notranslate" />
-  <meta content="Mashup templates have been developped by Orson.io team" name="author">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Projects</title>
+  <link rel="stylesheet" href="/page.css">
+  <style>
 
-  <!-- Disable tap highlight on IE -->
-  <meta name="msapplication-tap-highlight" content="no">
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
-  <link href="./assets/favicon.ico" rel="icon">
-  
-  <title>Title page</title>  
+    .projects-section {
+      padding: 50px 20px;
+      text-align: center;
+    }
 
-<link href="./main.3da94fde.css" rel="stylesheet"></head>
+    .projects-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #333;
+    }
 
+    .dark-mode .projects-section h1 {
+      color: #fff;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+
+    .project-card {
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .dark-mode .project-card {
+      background: #1e1e1e;
+      box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+    }
+
+    .project-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .project-image img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .project-content {
+      padding: 20px;
+      text-align: left;
+    }
+
+    .project-title {
+      font-size: 1.5rem;
+      margin: 0 0 10px;
+    }
+
+    .project-description {
+      font-size: 1rem;
+      margin: 0 0 15px;
+      color: #666;
+    }
+
+    .dark-mode .project-description {
+      color: #ccc;
+    }
+
+    .project-link {
+      display: inline-block;
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .dark-mode .project-link {
+      color: #66d9ef;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .projects-section {
+        padding: 20px;
+      }
+
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
 <body>
-
- <!-- Add your content of header -->
-
-<header>
-  <nav class="navbar navbar-fixed-top navbar-default">
-    <div class="container">
-        <button type="button" class="navbar-toggle">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        
-      <nav class="navbar-fullscreen" id="navbar-middle">
-        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <ul class="navbar-fullscreen-links">
+  <header>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+        <div class="navbar-toggle" onclick="toggleMenu()">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="dark-mode-toggle-mobile" onclick="toggleDarkMode()" style="align-items: center; gap: 10px; cursor: pointer;">
+          <span id="darkModeText" style="color: #f7f9fc; font-family: 'Poppins', sans-serif;">Light Mode</span>
+          <div class="circle">
+            <div class="crescent"></div>
+          </div>
+        </div>
+        <ul class="navbar-nav">
           <li><a href="./index.html" title="">Home</a></li>
-          <li><a href="./project.html" title="">Project</a></li>
           <li><a href="./about.html" title="">About me</a></li>
-          <li><a href="./components.html" title="">Components</a></li>
-        </ul>
-
-        <div class="footer-container">
-           
-          <p><small>© Untitled | Website created with <a href="http://www.mashup-template.com/" title="Create website with free html template">Mashup Template</a>/<a href="https://www.unsplash.com/" title="Beautiful Free Images">Unsplash</a></small></p>
-          <p class="footer-share-icons">
-              <a href="https://www.twitter.com" class="fa-icon" title="">
-                  <i class="fa fa-twitter" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.linkedin.com" class="fa-icon" title="">
-                  <i class="fa fa-instagram" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.behance.com" class="fa-icon" title="">
-                  <i class="fa fa-behance" aria-hidden="true"></i>
-              </a>
-              <a href="https://www.vimeo.com" class="fa-icon" title="">
-                  <i class="fa fa-vimeo" aria-hidden="true"></i>
-              </a>
-          </p>
-                       
-        </div>
-
-
-      </nav> 
-    
-    </div>
-  </nav>
-</header>
-
-  
-<div class="hero-full-container background-image-container white-text-container" style="background-image:url('./assets/images/img-08.jpg')">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="hero-full-wrapper">
-          <div class="text-content  text-center">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="section-container">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="text-center section-container-spacer">
-          <h2 class="with-project-number"><span class="project-number">01</span>Night Photography</h2>
-        </div>
-        <div class="row section-container-spacer">
-          <div class="col-md-4">
-              <div class="section-container-spacer">
-                <h3>Photographic Project</h3>
-                <p>Menphis June, 2016</p>
-              </div>
-
-              <h4>Credits & Crew</h4>
-              
-              <ul class="list-unstyled">
-                <li>Stanford</li> 
-                <li>Pablo Malice</li>
-                <li>Patricia Stano</li>
-              </ul>
-              
-
-              <p>Cityzen circus Association</p>
-              <p>Menphis City Hall</p>
-          </div>
-          <div class="col-md-8">
-            <h3>How to exchange with the nocturnal light ?</h3>
-            <p>Id eu nisl nunc mi ipsum faucibus vitae aliquet. Auctor urna nunc id cursus metus aliquam. A pellentesque sit amet
-              porttitor eget dolor morbi. Interdum varius sit amet mattis. Tincidunt dui ut ornare lectus sit amet est placerat
-              in. Diam volutpat commodo sed egestas. Praesent elementum facilisis leo vel fringilla est ullamcorper eget nulla.
-              Non odio euismod lacinia at quis risus sed vulputate. Lacus sed turpis tincidunt id aliquet risus feugiat.</p>
-              <p> Mieget mauris pharetra et ultrices neque ornare. Pellentesque elit ullamcorper dignissim cras tincidunt lobortis.
-              Euismod in pellentesque massa placerat. Consectetur libero id faucibus nisl tincidunt eget. Pulvinar etiam non
-              quam lacus suspendisse. Tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada. Ante in nibh mauris cursus
-              mattis molestie a iaculis. Gravida cum sociis natoque penatibus et magnis dis parturient montes. Ultrices gravida
-              dictum fusce ut placerat orci. Id cursus metus aliquam eleifend mi in. Odio eu feugiat pretium nibh ipsum consequat.
-            </p>
-          </div>
-        </div>
-
-
-        <img src="./assets/images/img-03.jpg" alt="" class="img-responsive">
-        <p>Menphis city center</p>
-
-        <blockquote class="text-center large-spacing">
-            <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante."</p>
-            <small class="pull-right">Irina Martin</small>
-        </blockquote>
-        
-        <div class="row">
-            <div class="col-md-6">
-            <img src="./assets/images/img-02.jpg" class="img-responsive" alt="">
-            <p>Menphis skyline</p>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+          <li class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
+            <div class="circle">
+              <div class="crescent"></div>
             </div>
-            <div class="col-md-6">
-            <img src="./assets/images/img-01.jpg" class="img-responsive" alt="">
-            <p>Artefact Buildging</p>
-            </div>
-        </div>
-
-        <img src="./assets/images/img-04.jpg" class="img-responsive" alt="">
-        <p>Menphis skyline</p>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="navbar navbar-default navbar-fixed-bottom">
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12 text-center">
-        <ul class="navbar-nav nav">
-          <li>
-            <a href="" title="" class="project-nav left"><span class="project-number">01</span>Previous</a>
-          </li>
-        </ul>
-        <p class="h5 navbar-text">Night Photography <i class="fa fa-chevron-down arrow-down" aria-hidden="true"></i></p>
-
-        <ul class="navbar-nav nav navbar-right">
-          <li>
-            <a href="" title="" class="project-nav right"><span class="project-number">03</span>Next </a>
           </li>
         </ul>
       </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-full-container">
+    <div class="overlay-gradient"></div>
+    <div class="text-content">
+        <h1>Projects</h1>
+        <p>My personal space where I showcase the work I have done, the projects I am passionate about, and the skills I have developed. Explore the projects below to learn more about my journey in the world of tech and innovation.</p>
     </div>
-  </div>
 </div>
 
 
+  <section class="projects-section">
+    <ul class="projects-grid">
+      <li class="project-card">
+        <div class="project-image">
+          <img src="./assets/images/portfolio.png" alt="Portfolio">
+        </div>
+        <div class="project-content">
+          <h2 class="project-title">Personal Portfolio</h2>
+          <p class="project-description">A modern and elegant portfolio showcasing my skills, projects, and professional experience.</p>
+          <a href="https://github.com/zulbiasa/zulbiasa.github.io" class="project-link" target="_blank">View Project</a>
+        </div>
+      </li>
+      <li class="project-card">
+        <div class="project-image">
+          <img src="./assets/images/gycc.png" alt="Golden Year Care Connect">
+        </div>
+      <div class="project-content">
+        <h2 class="project-title">Golden Year Care Connect (GYCC+)</h2>
+        <p class="project-description">
+          A responsive platform designed to provide elderly care solutions, offering two primary care options: In-Center and Home Care. It includes a user-friendly booking system, detailed service plans with transparent pricing, and a secure client management system. GYCC+ aims to ensure trust, convenience, and quality in elder care services.
+        </p>
+        <a href="#" class="project-link" target="_blank">View Project</a>
+      </div>      
+    </ul>
+  </section>
 
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
 
+      // Add a slight delay to text change for smoothness
+  setTimeout(() => {
+    document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+    document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+  }, 300);
 
-<script>
-    document.addEventListener("DOMContentLoaded", function (event) {
-      navbarToggleSidebar();
-      closeMenuBeforeGoingToPage();
-      navActivePage();
+    }
+
+    function toggleMenu() {
+      const navbarNav = document.querySelector('.navbar-nav');
+      navbarNav.classList.toggle('open');
+    }
+
+    // Check for saved preference on page load
+    window.onload = () => {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeText').innerText = 'Dark Mode';
+        document.getElementById('darkModeText1').innerText = 'Dark Mode';
+      }
+    };
+
+    window.addEventListener('scroll', function () {
+      var navbar = document.querySelector('.navbar-fixed-top');
+      var heroSection = document.querySelector('.hero-full-container');
+
+      // Get the bottom position of the hero section
+      var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+      // If the user has scrolled past the hero section
+      if (window.pageYOffset > heroBottom) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
     });
-</script>
- <script type="text/javascript" src="./main.4c6e144e.js"></script></body>
-
+  </script>
+</body>
 </html>

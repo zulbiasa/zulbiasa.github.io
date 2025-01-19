@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Skills Showcase</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link rel="stylesheet" href="/page.css">
+
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header>
+    <nav class="navbar navbar-fixed-top">
+      <div class="navbar-container container">
+          <div class="navbar-toggle" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+          <div class="dark-mode-toggle-mobile" onclick="toggleDarkMode()" style="align-items: center; gap: 10px; cursor: pointer;">
+            <span id="darkModeText" style="color: #f7f9fc; font-family: 'Poppins', sans-serif;">Light Mode</span>
+            <div class="circle">
+                <div class="crescent"></div>
+            </div>
+        </div>
+
+        <ul class="navbar-nav">
+          <li><a href="./index.html" title="">Home</a></li>
+          <li><a href="./about.html" title="">About me</a></li>
+          <li><a href="./education.html" title="">Education & Experience</a></li>
+          <li><a href="./skill.html" title="">Skill</a></li>
+          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./contact.html" title="">Contact</a></li>
+          <li class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
+            <div class="circle">
+              <div class="crescent"></div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero-full-container">
+    <div class="overlay-gradient"></div>
+    <div class="text-content">
+      <h1>Skills</h1>
+      <p>Explore my technical and creative skillset</p>
+    </div>
+  </div>
+
+  <!-- Skills Section -->
+  <section class="skills-section">
+    <h2>My Technical Skills</h2>
+    <div class="skills-container">
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fab fa-html5"></i></div>
+            <div class="skill-title">HTML5</div>
+            <div class="skill-level">Intermediate</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 70%;"></div>
+            </div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fab fa-css3-alt"></i></div>
+            <div class="skill-title">CSS3</div>
+            <div class="skill-level">Intermediate</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 70%;"></div>
+            </div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fab fa-js"></i></div>
+            <div class="skill-title">JavaScript</div>
+            <div class="skill-level">Intermediate</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 70%;"></div>
+            </div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fab fa-java"></i></div>
+            <div class="skill-title">Java</div>
+            <div class="skill-level">Intermediate</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 50%;"></div>
+            </div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fa-brands fa-flutter"></i></div>
+            <div class="skill-title">Flutter</div>
+            <div class="skill-level">Beginner</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 45%;"></div>
+            </div>
+        </div>
+        <div class="skill-card">
+            <div class="skill-icon"><i class="fa-brands fa-laravel"></i></div>
+            <div class="skill-title">Laravel</div>
+            <div class="skill-level">Beginner</div> <!-- Skill Level -->
+            <div class="progress-bar">
+                <div class="progress-bar-inner" style="--progress: 40%;"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <!-- Dark Mode Toggle Script -->
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      const isDarkMode = document.body.classList.contains('dark-mode');
+      localStorage.setItem('darkMode', isDarkMode);
+      document.getElementById('darkModeText').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+      document.getElementById('darkModeText1').innerText = isDarkMode ? 'Dark Mode' : 'Light Mode';
+    }
+
+    function toggleMenu() {
+      const navbarNav = document.querySelector('.navbar-nav');
+      navbarNav.classList.toggle('open');
+    }
+
+    // Check for saved preference on page load
+    window.onload = () => {
+      const isDarkMode = localStorage.getItem('darkMode') === 'true';
+      if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+        document.getElementById('darkModeText').innerText = 'Dark Mode';
+        document.getElementById('darkModeText1').innerText = 'Dark Mode';
+      }
+    };
+
+    window.addEventListener('scroll', function() {
+  var navbar = document.querySelector('.navbar-fixed-top');
+  var heroSection = document.querySelector('.hero-full-container');
+
+  // Get the bottom position of the hero section
+  var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+
+  // If the user has scrolled past the hero section
+  if (window.pageYOffset > heroBottom) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+});
+  </script>
+</body>
+
+</html>
