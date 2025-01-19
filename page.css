@@ -117,6 +117,7 @@ background-color: #222; /* Or any color that fits your dark mode scheme */
     background-size: cover;
     background-position: center;
     z-index: -1;
+    filter: blur(3px);
   }
 
   .overlay-gradient {
