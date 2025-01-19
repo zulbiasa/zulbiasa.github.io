@@ -293,8 +293,15 @@ left: 20px; /* Adjust as needed */
   display: none;
 }
 
+
+
+
   /* Responsive adjustments */
 @media (max-width: 768px) {
+
+    .mobile{
+        display: none;
+      }
 
   .dark-mode-toggle-mobile{
           display: flex;
@@ -316,6 +323,8 @@ left: 20px; /* Adjust as needed */
   .dark-mode-toggle{
           display: none;
       }
+
+
 
 .navbar-nav {
   flex-direction: column; /* Stack items vertically on smaller screens */
@@ -347,15 +356,15 @@ left: 20px; /* Adjust as needed */
     }
 
     h1 {
-      font-size: 4rem;
+      font-size: 3rem;
     }
 
     p {
-      font-size: 2rem;
+      font-size: 1.6rem;
     }
 
-    .text-content {
-      padding: 0 15px;
+    .text-content h1,p{
+        font-size: 1.2rem
     }
 
   }

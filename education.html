@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Education & Experience</title>
-  <link rel="stylesheet" href="/page.css">
   <style>
     /* Section Styling */
 .section {
@@ -75,7 +74,7 @@ button {
 .hidden {
     opacity: 0;
     transform: translateX(50px);
-    transition: all 1s ease-out;
+    transition: all 0.3s ease-out;
 }
 
 /* Visible State (After Animation) */
@@ -101,12 +100,12 @@ button {
 .timeline-line {
   position: absolute;
   top: 0;
-  left: 70px;
+  left: 46px;
   width: 2px;
   height: 100%;
   background-color: transparent;
   z-index: -1;
-  border-left: 2px dashed #FF4081; /* Add dashed line style */
+  border-left: 2px solid #FF4081; /* Add dashed line style */
 }
 
 /* Dotted line at the end */
@@ -117,9 +116,9 @@ button {
     left: -10px; /* Adjust as needed */
     width: 2px; /* Same width as the main line */
     height: 20px; /* Height of the dotted part */
-    border-left: 2px dotted #FF4081; /* Dotted line */
+    border-left: 2px solid #FF4081; /* Dotted line */
     opacity: 0; /* Start hidden */
-    animation: fadeOut 1s forwards; /* Fade out animation */
+    animation: fadeOut 0.3s forwards; /* Fade out animation */
 }
 
 @keyframes fadeOut {
@@ -139,7 +138,7 @@ button {
     width: 80%;
     text-align: left;
     position: relative;
-    animation: fadeIn 1s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 .timeline-item .dot {
@@ -259,17 +258,16 @@ button:active:before {
     }
 
     .timeline-line {
-      left: 21px;
+      left: 55px;
       border-left: none;
-      border-right: 2px dashed #ff4081;
+      border-left: 2px solid #FF4081; /* Add dashed line style */
     }
 
     .timeline-item .dot {
-      left: -47px;
+      left: -32px;
     }
 
     .timeline-item {
-        width: 90%; /* Make items wider on smaller screens */
         padding: 15px; /* Reduce padding for smaller screens */
     }
 
@@ -283,6 +281,22 @@ button:active:before {
 }
 
 @media (max-width: 480px) {
+
+    .timeline {
+        padding-left: 20px;
+        margin-left: 0; /* Remove left margin for smaller screens */
+    }
+
+    .timeline-line {
+      left: 21px;
+      border-left: none;
+      border-right: 2px solid #ff4081;
+    }
+
+    .timeline-item .dot {
+      left: -30px;
+    }
+
     h2 {
         font-size: 1.2em; /* Further adjust heading size for very small screens */
     }
@@ -320,9 +334,12 @@ body.dark-mode .timeline-item.completed {
 }
 
 body.dark-mode .timeline-item.active {
-    border-left-color: #FF4081; /* Active border color in dark mode */
+    border-left-color: 
+    #FF4081; /* Active border color in dark mode */
 }
   </style>
+  
+  <link rel="stylesheet" href="/page.css">
 </head>
 <body>
   <!-- Header -->
@@ -340,13 +357,14 @@ body.dark-mode .timeline-item.active {
             <div class="crescent"></div>
           </div>
         </div>
+        
         <ul class="navbar-nav">
-          <li><a href="./index.html" title="">Home</a></li>
-          <li><a href="./about.html" title="">About me</a></li>
-          <li><a href="./education.html" title="">Education & Experience</a></li>
-          <li><a href="./skill.html" title="">Skill</a></li>
-          <li><a href="./project.html" title="">Project</a></li>
-          <li><a href="./contact.html" title="">Contact</a></li>
+          <li><a href="./index.html" title="">Home</a></li><p class="mobile">||</p>
+          <li><a href="./about.html" title="">About me</a></li><p class="mobile">||</p>
+          <li><a href="./education.html" title="">Education & Experience</a></li><p class="mobile">||</p>
+          <li><a href="./skill.html" title="">Skill</a></li><p class="mobile">||</p>
+          <li><a href="./project.html" title="">Project</a></li><p class="mobile">||</p>
+          <li><a href="./contact.html" title="">Contact</a></li><p class="mobile">||</p>
           <li class="dark-mode-toggle" onclick="toggleDarkMode()">
             <span id="darkModeText1" style="color: #f7f9fc;">Light Mode</span>
             <div class="circle">

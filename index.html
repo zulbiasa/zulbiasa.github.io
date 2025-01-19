@@ -12,13 +12,23 @@
   <!-- Disable tap highlight on IE -->
   <meta name="msapplication-tap-highlight" content="no">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-icon-180x180.png">
   <link href="./assets/favicon.ico" rel="icon">
   <link rel="stylesheet" href="page.css">
   <style>
     .hero-full-container::before {
       filter: none;
     }
+
+    .navbar-nav {
+  padding-top: 10px;
+}
+
+/* Adjust for smaller screens */
+@media (max-width: 768px) {
+  .navbar-nav {
+    padding-top: 100px;
+  }
+}
   </style>
 
   <title>Home page</title>
@@ -36,11 +46,11 @@
         </div>
         
         <ul class="navbar-nav">
-          <li><a href="./index.html" title="">Home</a></li>
-          <li><a href="./about.html" title="">About me</a></li>
-          <li><a href="./education.html" title="">Education & Experience</a></li>
-          <li><a href="./skill.html" title="">Skill</a></li>
-          <li><a href="./project.html" title="">Project</a></li>
+          <li><a href="./index.html" title="">Home</a></li><p class="mobile">||</p>
+          <li><a href="./about.html" title="">About me</a></li><p class="mobile">||</p>
+          <li><a href="./education.html" title="">Education & Experience</a></li><p class="mobile">||</p>
+          <li><a href="./skill.html" title="">Skill</a></li><p class="mobile">||</p>
+          <li><a href="./project.html" title="">Project</a></li><p class="mobile">||</p>
           <li><a href="./contact.html" title="">Contact</a></li>
         </ul>
       </div>
