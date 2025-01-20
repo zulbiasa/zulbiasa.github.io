@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Contact Me</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+<link rel="manifest" href="assets/site.webmanifest">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
@@ -370,6 +374,7 @@
 
     .contact-form input[type="text"],
 .contact-form input[type="email"],
+.contact-form input[type="tel"],
 .contact-form textarea {
     width: 100%;
     padding: 10px;
@@ -488,6 +493,7 @@
 
   .contact-form input[type="text"],
     .contact-form input[type="email"],
+    .contact-form input[type="tel"],
     .contact-form textarea {
         max-width: 768px;
     }
@@ -513,6 +519,7 @@
 
       .contact-form input[type="text"],
     .contact-form input[type="email"],
+    .contact-form input[type="tel"],
     .contact-form textarea {
         max-width: 480px;
     }
@@ -554,6 +561,7 @@
               <div class="crescent"></div>
             </div>
           </li>
+          <li><div class="button"><a href="/assets/documents/CV Zulhelmi Afendi.pdf" target="_blank" class="anchor"><span>Download CV</span></a></div></li>
         </ul>
       </div>
     </nav>
@@ -571,12 +579,15 @@
   <!-- Contact Section -->
   <section class="contact-section">
     <h2>Contact Me</h2>
-    <form class="contact-form" action="#" method="post">
+    <form class="contact-form" action="https://formspree.io/f/mjkkngge" method="POST" id="contactForm">
       <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
 
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" required>
+
+      <label for="phone">Phone Number:</label>
+      <input type="tel" id="phone" name="phone" pattern="^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$" required>
 
       <label for="message">Message:</label>
       <textarea id="message" name="message" required></textarea>
@@ -647,6 +658,18 @@
         navbar.classList.remove('scrolled');
       }
     });
+
+    // Select the form element
+  const form = document.getElementById('contactForm');
+
+// Add an event listener for the form's submit event
+form.addEventListener('submit', function (event) {
+  // Allow the form to submit
+  setTimeout(() => {
+    // Reset the form after submission
+    form.reset();
+  }, 200); // Small delay to ensure submission is complete
+});
   </script>
 </body>
 

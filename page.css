@@ -54,6 +54,15 @@ text-shadow: 1px 1px 3px black;
 display: inline-block; /* Ensure transform applies to inline elements */
 }
 
+.navbar-nav > li > span {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease, transform 0.3s ease; /* Add transform to transition */
+  text-shadow: 1px 1px 3px black;
+  display: inline-block; /* Ensure transform applies to inline elements */
+  }
+
 .navbar-nav > li > a:hover {
 color: #007bff;
 transform: scale(1.1); /* Scale up on hover */
@@ -67,6 +76,11 @@ transform: scale(1.1); /* Scale up on hover */
     color: #fff;
     text-shadow: none;
   }
+
+  .dark-mode .navbar-nav > li > a:hover {
+    color: #007bff;
+    transform: scale(1.1); /* Scale up on hover */
+    }
 
   .bar {
     width: 25px;
@@ -293,11 +307,55 @@ left: 20px; /* Adjust as needed */
   display: none;
 }
 
+/* From Uiverse.io by Codecite */ 
+.anchor {
+  text-decoration: none;
+  color: #fff;
+  display: inline-block;
+  font-family: sans-serif;
+  font-weight: 600;
+  border-radius: 50px;
+  border: 2px solid #ed553b;
+  padding: 14px 40px 13px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease; /* Smooth transition for color and border */
+}
+
+.anchor:hover {
+  color: #141a45;
+  border: 2px solid #494c4e;
+  background-color: #f7f7f7;
+}
+
+.button a::before {
+  position: absolute;
+  content: "";
+  z-index: 0;
+  background-color: #ed553b;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  height: 111%;
+  transition: height 0.3s ease, background-color 0.3s ease;
+}
+
+.button a:hover::before {
+  height: 11%;
+}
+
+.button span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease; /* Smooth transition for text color */
+}
+
+
 
 
 
   /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1140px) {
 
     .mobile{
         display: none;
