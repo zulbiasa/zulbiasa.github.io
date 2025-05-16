@@ -1,0 +1,13 @@
+[
+    {
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.zulbiasa.stumart",
+        "sha256_cert_fingerprints": [
+          "57:94:FE:B2:D6:C4:0E:83:FA:5C:82:36:81:C2:2F:6B:77:29:39:0D:AB:49:4B:2D:C7:22:74:18:8F:F0:89:AC"
+        ]
+      }
+    }
+  ]
+  

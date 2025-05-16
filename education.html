@@ -341,6 +341,70 @@ body.dark-mode .timeline-item.active {
     border-left-color: 
     #FF4081; /* Active border color in dark mode */
 }
+
+/* The actual timeline (the vertical ruler) */
+.timeline1 {
+  position:relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* The actual timeline (the vertical ruler) */
+.timeline1::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background-color: #FF4081;
+  top: 0;
+  bottom: 0;
+  left: 10%;
+  margin-left: -3px;
+}
+
+/* Container around content */
+.container1 {
+  padding: 10px 40px;
+  position: relative;
+  background-color: inherit;
+  width: 70%;
+}
+
+/* The circles on the timeline */
+.container1::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  right: 10%;
+  background-color: white;
+  border: 4px solid #FF9F55;
+  top: 15px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Place the container to the right */
+.right {
+  left: 10%;
+}
+/* Add arrows to the right container (pointing left) */
+.right::before {
+  content: " ";
+  height: 0;
+  position: absolute;
+  top: 22px;
+  width: 0;
+  z-index: 1;
+  left: 30px;
+  border: medium solid white;
+  border-width: 10px 10px 10px 0;
+  border-color: transparent white transparent transparent;
+}
+/* Fix the circle for containers on the right side */
+.right::after {
+  left: -16px;
+}
+
   </style>
   
   <link rel="stylesheet" href="/page.css">
@@ -415,6 +479,18 @@ body.dark-mode .timeline-item.active {
         <small>2018 - 2019</small>
       </div>
     </div>
+  </section>
+
+  <section class="section education-progress">
+    <h2>My Education Journey</h2>
+    <div class="timeline1">
+      <div class="container1 right">
+        <div class="content">
+          <h2>2017</h2>
+          <p>Lorem ipsum..</p>
+        </div>
+      </div>
+      </div>
   </section>
   
   
