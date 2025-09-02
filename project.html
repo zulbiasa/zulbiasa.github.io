@@ -27,13 +27,13 @@
     }
 
     .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      padding: 0;
-      list-style: none;
-      margin: 0;
-    }
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 0;
+  list-style: none;
+  margin: 0 auto;
+}
 
     .project-card {
       background: #fff;
@@ -91,7 +91,19 @@
       color: #66d9ef;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1200px) {
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+    @media (max-width: 600px) {
       header {
         flex-direction: column;
         text-align: center;
@@ -105,6 +117,45 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .project-actions {
+  display: flex;
+  justify-content: space-between; /* pushes View Project left, Download right */
+  align-items: center;
+  margin-top: 10px;
+}
+
+.project-link {
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+
+    .download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #007BFF;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.download-btn i {
+  font-size: 16px;
+}
+
+.download-btn:hover {
+  background: #0056b3;
+}
+
   </style>
 </head>
 <body>
@@ -168,6 +219,7 @@
           <a href="https://github.com/zulbiasa/zulbiasa.github.io" class="project-link" target="_blank">View Project</a>
         </div>
       </li>
+    
       <li class="project-card">
         <div class="project-image">
           <img src="./assets/images/gycc.png" alt="Golden Year Care Connect">
@@ -182,6 +234,7 @@
           <a href="https://github.com/zulbiasa/gycc_web" class="project-link" target="_blank">View Project</a>
         </div>
       </li>
+    
       <li class="project-card">
         <div class="project-image">
           <img src="./assets/images/flight_project.png" alt="MalaysiaLines Flight Tickets">
@@ -196,24 +249,52 @@
           </p>
           <a href="https://github.com/soonkit-king/MalaysiaLines-Flight-Tickets" class="project-link" target="_blank">View Project</a>
         </div>
+      </li>
+    
       <li class="project-card">
-  <div class="project-image">
-    <img src="./assets/images/debt_plus.png" alt="Debt Plus">
-  </div>
-  <div class="project-content">
-    <h2 class="project-title">Debt Plus</h2>
-    <p class="project-description" style="text-align: justify;">
-      A Flutter-based mobile app designed to help users manage their debt by providing a clear overview of their financial situation, 
-      offering personalized debt repayment plans, and tracking progress towards financial freedom. It also can track who owes money 
-      to you and who you owe money to. This app uses Hive for offline data storage which secures your debt only in the app.
-    </p>
-    <a href="https://github.com/zulbiasa/debt_plus" class="project-link" target="_blank">View Project</a><br>
-    <a href="https://github.com/zulbiasa/debt_plus/releases/download/v1.0.0/app-release.apk" class="project-link" target="_blank" download>
-      <button style="margin-top: 8px;">Download .APK</button>
-    </a>
-  </div>
-</li>       
-    </ul>
+        <div class="project-image">
+          <img src="./assets/images/debt_plus.png" alt="Debt Plus">
+        </div>
+        <div class="project-content">
+          <h2 class="project-title">Debt Plus</h2>
+          <p class="project-description" style="text-align: justify;">
+            A Flutter-based mobile app designed to help users manage their debt by providing a clear overview of their financial situation, 
+            offering personalized debt repayment plans, and tracking progress towards financial freedom. It also can track who owes money 
+            to you and who you owe money to. This app uses Hive for offline data storage which secures your debt only in the app.
+          </p>
+          <div class="project-actions">
+            <a href="https://github.com/zulbiasa/debt_plus" class="project-link" target="_blank">View Project</a>
+            <a href="https://github.com/zulbiasa/debt_plus/releases/download/v1.0.0/app-release.apk" 
+               class="download-btn" target="_blank" download>
+              <i class="fas fa-arrow-down"></i> Download .APK
+            </a>
+          </div>
+        </div>
+      </li>       
+    
+      <!-- 🆕 StuMart Project -->
+      <li class="project-card">
+        <div class="project-image">
+          <img src="./assets/images/stumart.png" alt="StuMart">
+        </div>
+        <div class="project-content">
+          <h2 class="project-title">StuMart - Student Marketplace</h2>
+          <p class="project-description" style="text-align: justify;">
+            StuMart is a second-hand marketplace app designed exclusively for university students. 
+            It provides a platform for students to buy and sell pre-loved items securely within their campus community. 
+            Features include authentication with university email, chat system with notifications, deep linking, 
+            and kiosk-based QR pickup for transactions. Built with Flutter and Supabase for scalability and real-time communication.
+          </p>
+          <div class="project-actions">
+            <a href="https://github.com/zulbiasa/stumart" class="project-link" target="_blank">View Project</a>
+            <a href="https://github.com/zulbiasa/stumart/releases/download/v1.0.0/stumart-release.apk" 
+               class="download-btn" target="_blank" download>
+              <i class="fas fa-arrow-down"></i> Download .APK
+            </a>
+          </div>
+        </div>
+      </li>
+    </ul>    
   </section>
 
   <!-- Dark Mode Toggle Script -->
