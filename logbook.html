@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Logbook Filler — LOGBOOK_&lt;&lt;Date&gt;&gt;</title>
+  <style>
+    :root{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    body{margin:0;background:#f3f4f6;color:#111}
+    .wrap{max-width:800px;margin:20px auto;padding:16px}
+    h1{font-size:20px;margin:0 0 12px}
+    label{display:block;margin-top:8px;font-weight:500}
+    input, textarea, select{font-size:14px;padding:6px;width:98%;border:1px solid #bbb;border-radius:4px}
+    textarea{min-height:40px}
+    button{background:#0b5fff;color:white;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
+    button.secondary{background:#6b7280}
+    .time-entry{border:1px solid #ddd;background:white;padding:10px;margin-top:10px;border-radius:8px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+    footer{margin-top:20px;font-size:13px;color:#666;text-align:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Daily Training Log Generator</h1>
+
+    <label>Date</label>
+    <input type="date" id="field_date">
+    <label>Day</label>
+    <input type="text" id="field_day" readonly>
+    <label>Training Week</label>
+    <input type="text" id="field_week" placeholder="Week">
+
+    <div id="timeEntries"></div>
+
+    <table>
+        <row>
+            <td><button id="addEntry">+ Add Time Entry</button></td>
+            <td><h5>Maximum 8 entries</h5></td>
+        </row>
+    </table>
+    
+
+    <div class="controls">
+      <button id="downloadBtn">Download filled PDF</button>
+    </div>
+
+    <footer>© 2025 Zulhelmi Afendi All right reserved</footer>
+  </div>
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script>
+    const FIELD_MAP = {
+      field_day: { x: 290, y: 760, size: 10 },
+      field_week: { x: 490, y: 760, size: 10 },
+      field_date: { x: 130, y: 760, size: 10 },
+      t1: { x: 102, y: 700, size: 10, align: 'center' },
+      e1: { x: 140, y: 700, size: 10 },
+      d1: { x: 335, y: 700, size: 10 },
+      t2: { x: 102, y: 640, size: 10, align: 'center' },
+      e2: { x: 140, y: 640, size: 10 },
+      d2: { x: 335, y: 640, size: 10 },
+      t3: { x: 102, y: 575, size: 10, align: 'center' },
+      e3: { x: 140, y: 575, size: 10 },
+      d3: { x: 335, y: 575, size: 10 },
+      t4: { x: 102, y: 510, size: 10, align: 'center' },
+      e4: { x: 140, y: 510, size: 10 },
+      d4: { x: 335, y: 510, size: 10 },
+      t5: { x: 102, y: 435, size: 10, align: 'center' },
+      e5: { x: 140, y: 435, size: 10 },
+      d5: { x: 335, y: 435, size: 10 },
+      t6: { x: 102, y: 370, size: 10, align: 'center' },
+      e6: { x: 140, y: 370, size: 10 },
+      d6: { x: 335, y: 370, size: 10 },
+      t7: { x: 102, y: 305, size: 10, align: 'center' },
+      e7: { x: 140, y: 305, size: 10 },
+      d7: { x: 335, y: 305, size: 10 },
+      t8: { x: 102, y: 240, size: 10, align: 'center' },
+      e8: { x: 140, y: 240, size: 10 },
+      d8: { x: 335, y: 240, size: 10 },
+      field_date2: { x: 110, y: 89, size: 10 }
+    };
+
+    const addEntryBtn = document.getElementById('addEntry');
+    const entriesDiv = document.getElementById('timeEntries');
+    let entryCount = 0;
+
+    function createTimeEntry(){
+      entryCount++;
+      const div = document.createElement('div');
+      div.className = 'time-entry';
+      div.innerHTML = `
+        <label>Time</label>
+        <input type="time" id="t${entryCount}" step="60">
+        <label>Entry</label>
+        <input type="text" id="e${entryCount}" placeholder="Entry title">
+        <label>Description</label>
+        <textarea id="d${entryCount}" placeholder="Description"></textarea>
+      `;
+      entriesDiv.appendChild(div);
+    }
+
+    for(let i=0;i<3;i++) createTimeEntry();
+
+    addEntryBtn.addEventListener('click', ()=>{
+      if(entryCount<8) createTimeEntry();
+      else alert('Maximum 8 entries allowed');
+    });
+
+    document.getElementById('field_date').addEventListener('change', function(){
+      const dateVal = this.value;
+      if(!dateVal) return;
+      const d = new Date(dateVal);
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const dayName = days[d.getUTCDay()];
+      document.getElementById('field_day').value = dayName;
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', async ()=>{
+      try{
+        const templateUrl = 'assets/documents/logbook_template.pdf';
+        const resp = await fetch(templateUrl);
+        const bytes = await resp.arrayBuffer();
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+        const page = pdfDoc.getPages()[0];
+
+        const getVal = id => document.getElementById(id)?.value || '';
+
+        function wrapTextWidth(text, maxWidth, fontSize){
+          const approxCharWidth = fontSize * 0.55;
+          const maxChars = Math.floor(maxWidth / approxCharWidth);
+          const words = text.split(' ');
+          let lines = [], currentLine = '';
+          for(const word of words){
+            if((currentLine + word).length > maxChars){
+              lines.push(currentLine.trim());
+              currentLine = word + ' ';
+            } else currentLine += word + ' ';
+          }
+          lines.push(currentLine.trim());
+          return lines;
+        }
+
+        function drawText(x, y, text, size=10, align='left', maxWidth=200){
+          const lines = wrapTextWidth(text, maxWidth, size);
+          let currentY = y;
+          for(let i=0;i<lines.length;i++){
+            const line = lines[i];
+            let drawX = x;
+            if(align==='center'){
+              const textWidth = line.length * size * 0.55;
+              drawX = x - textWidth/2;
+            }
+            page.drawText(line, { x: drawX, y: currentY, size });
+            currentY -= (size + 2);
+          }
+          return (lines.length - 1) * 10; // total height consumed
+        }
+
+        const vals = {
+          field_day: getVal('field_day'),
+          field_week: getVal('field_week'),
+          field_date: formatDate(getVal('field_date')),
+          field_date2: formatDate(getVal('field_date'))
+        };
+
+        let yOffset = 0;
+        drawText(FIELD_MAP.field_date.x, FIELD_MAP.field_date.y, vals.field_date, FIELD_MAP.field_date.size);
+        drawText(FIELD_MAP.field_day.x, FIELD_MAP.field_day.y, vals.field_day, FIELD_MAP.field_day.size);
+        drawText(FIELD_MAP.field_week.x, FIELD_MAP.field_week.y, vals.field_week, FIELD_MAP.field_week.size);
+        drawText(FIELD_MAP.field_date2.x, FIELD_MAP.field_date2.y, vals.field_date2, FIELD_MAP.field_date2.size);
+
+
+        for(let i=1;i<=entryCount;i++){
+            
+          const timeKey = `t${i}`;
+          const entryKey = `e${i}`;
+          const descKey = `d${i}`;
+
+          const tPos = FIELD_MAP[timeKey];
+          const ePos = FIELD_MAP[entryKey];
+          const dPos = FIELD_MAP[descKey];
+
+          let timeText = formatTime(getVal(timeKey));
+          let entryText = getVal(entryKey);
+          let descText = getVal(descKey);
+
+          let usedEntry = 0;
+          let usedDesc = 0;
+
+          if(timeText) drawText(tPos.x, tPos.y - yOffset, timeText, tPos.size, tPos.align, 180);
+          if(entryText) usedEntry = drawText(ePos.x, ePos.y - yOffset, entryText, ePos.size, ePos.align, 160);
+          if(descText) usedDesc = drawText(dPos.x, dPos.y - yOffset, descText, dPos.size, dPos.align, 160);
+
+          let maxUsed = Math.max(usedEntry, usedDesc);
+          if(maxUsed > 0) yOffset += maxUsed;
+        }
+
+        const out = await pdfDoc.save();
+        const blob = new Blob([out], {type: 'application/pdf'});
+        const now = new Date();
+        const name = `LOGBOOK_${now.getDate().toString().padStart(2,'0')}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}.pdf`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+      }catch(e){
+        alert('Error generating PDF: '+e.message);
+      }
+    });
+
+    function formatDate(val){
+      if(!val) return '';
+      const d = new Date(val);
+      return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
+    }
+
+    function formatTime(timeStr){
+      if(!timeStr) return '';
+      let [h,m] = timeStr.split(':').map(Number);
+      const ampm = h>=12 ? 'PM':'AM';
+      h = h%12 || 12;
+      return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
+    }
+
+  </script>
+</body>
+</html>
