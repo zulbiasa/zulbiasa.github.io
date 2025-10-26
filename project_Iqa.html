@@ -23,135 +23,135 @@
 <body>
 <canvas id="birthdayCanvas"></canvas>
 <script>
-const canvas = document.getElementById('birthdayCanvas');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-const messages = [
-  "Happy Birthday", "Feliz Cumpleaños", "Selamat Hari Lahir", "Joyeux Anniversaire",
-  "Alles Gute", "Buon Compleanno", "お誕生日おめでとう", "생일 축하해요",
-  "生日快乐", "С Днём Рождения", "عيد ميلاد سعيد", "Χρόνια Πολλά",
-  "Feliz Aniversário", "शुभ जन्मदिन", "สุขสันต์วันเกิด", "Tanti Auguri"
-];
-
-// 🎈 Add your image URLs here
-const totalImages = 29; // adjust to how many you have
-const imageSources = Array.from({ length: totalImages }, (_, i) => `/assets/images/iqa/${i + 1}.jpg`);
-
-
-const images = [];
-let loaded = 0;
-imageSources.forEach(src => {
-  const img = new Image();
-  img.src = src;
-  img.onload = () => {
-    loaded++;
-    if (loaded === imageSources.length) startAnimation();
-  };
-  images.push(img);
-});
-
-class Star {
-  constructor() { this.reset(); }
-  reset() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.z = Math.random() * canvas.width;
-  }
-  update() {
-    this.z -= 1.2;
-    if (this.z <= 0) this.reset();
-  }
-  draw() {
-    const sx = (this.x - canvas.width / 2) * (canvas.width / this.z) + canvas.width / 2;
-    const sy = (this.y - canvas.height / 2) * (canvas.width / this.z) + canvas.height / 2;
-    const size = (1 - this.z / canvas.width) * 2;
-    ctx.beginPath();
-    ctx.arc(sx, sy, size, 0, 2 * Math.PI);
-    ctx.fillStyle = "white";
-    ctx.fill();
-  }
-}
-
-class Word {
-  constructor(text) { this.text = text; this.reset(); }
-  reset() {
-    this.x = (Math.random() - 0.5) * canvas.width * 2;
-    this.y = (Math.random() - 0.5) * canvas.height * 2;
-    this.z = Math.random() * canvas.width;
-  }
-  update() {
-    this.z -= 2; // consistent speed
-    if (this.z < 1) this.reset();
-  }
-  draw() {
-    const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
-    const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
-    const scale = canvas.width / this.z;
-    const fontSize = Math.min(Math.max(scale * 10, 12), 40);
-    ctx.font = `${fontSize}px Poppins`;
-    ctx.fillStyle = `rgba(255,255,255,${1 - this.z / canvas.width})`;
-    ctx.fillText(this.text, sx, sy);
-  }
-}
-
-class FlyingImage {
-  constructor(img) { this.img = img; this.reset(); }
-  reset() {
-    this.x = (Math.random() - 0.5) * canvas.width * 2;
-    this.y = (Math.random() - 0.5) * canvas.height * 2;
-    this.z = Math.random() * canvas.width;
-    this.size = 30 + Math.random() * 40;
-  }
-  update() {
-    this.z -= 2;
-    if (this.z < 1) this.reset();
-  }
-  draw() {
-    const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
-    const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
-    const scale = canvas.width / this.z;
-    const size = this.size * scale;
-    ctx.globalAlpha = 1 - this.z / canvas.width;
-    ctx.drawImage(this.img, sx - size / 2, sy - size / 2, size, size);
-    ctx.globalAlpha = 1;
-  }
-}
-
-function startAnimation() {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-let stars, words, flyingImages;
-
-if (isMobile) {
-  // 💫 Lighter version for mobile
-  stars = Array.from({ length: 80 }, () => new Star());
-  words = Array.from({ length: 20 }, () => new Word(messages[Math.floor(Math.random() * messages.length)]));
-  flyingImages = Array.from({ length: 30 }, () => new FlyingImage(images[Math.floor(Math.random() * images.length)]));
-} else {
-  // 💻 Heavier version for desktop
-  stars = Array.from({ length: 150 }, () => new Star());
-  words = Array.from({ length: 60 }, () => new Word(messages[Math.floor(Math.random() * messages.length)]));
-  flyingImages = Array.from({ length: 80 }, () => new FlyingImage(images[Math.floor(Math.random() * images.length)]));
-}
-  function animate() {
-    ctx.fillStyle = "rgba(0,0,0,0.3)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    stars.forEach(s => { s.update(); s.draw(); });
-    words.forEach(w => { w.update(); w.draw(); });
-    flyingImages.forEach(i => { i.update(); i.draw(); });
-
-    requestAnimationFrame(animate);
-  }
-  animate();
-}
-</script>
-</body>
-</html>
+    const canvas = document.getElementById('birthdayCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    
+    const messages = [
+      "Happy Birthday", "Feliz Cumpleaños", "Selamat Hari Lahir", "Joyeux Anniversaire",
+      "Alles Gute", "Buon Compleanno", "お誕生日おめでとう", "생일 축하해요",
+      "生日快乐", "С Днём Рождения", "عيد ميلاد سعيد", "Χρόνια Πολλά",
+      "Feliz Aniversário", "शुभ जन्मदिन", "สุขสันต์วันเกิด", "Tanti Auguri"
+    ];
+    
+    // 🎈 Add your image URLs here
+    const totalImages = 29; // adjust to how many you have
+    const imageSources = Array.from({ length: totalImages }, (_, i) => `/assets/images/iqa/${i + 1}.jpg`);
+    
+    const images = [];
+    let loaded = 0;
+    imageSources.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        loaded++;
+        if (loaded === imageSources.length) startAnimation();
+      };
+      images.push(img);
+    });
+    
+    class Star {
+      constructor() { this.reset(); }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.z = Math.random() * canvas.width;
+      }
+      update() {
+        this.z -= 1.2;
+        if (this.z <= 0) this.reset();
+      }
+      draw() {
+        const sx = (this.x - canvas.width / 2) * (canvas.width / this.z) + canvas.width / 2;
+        const sy = (this.y - canvas.height / 2) * (canvas.width / this.z) + canvas.height / 2;
+        const size = (1 - this.z / canvas.width) * 2;
+        ctx.beginPath();
+        ctx.arc(sx, sy, size, 0, 2 * Math.PI);
+        ctx.fillStyle = "white";
+        ctx.fill();
+      }
+    }
+    
+    function startAnimation() {
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+      class Word {
+        constructor(text) { this.text = text; this.reset(); }
+        reset() {
+          const range = isMobile ? 0.5 : 2; // smaller spawn range for mobile
+          this.x = (Math.random() - 0.5) * canvas.width * range;
+          this.y = (Math.random() - 0.5) * canvas.height * range;
+          this.z = Math.random() * canvas.width;
+        }
+        update() {
+          this.z -= isMobile ? 1.2 : 2; // slower on mobile
+          if (this.z < 1) this.reset();
+        }
+        draw() {
+          const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
+          const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
+          const scale = canvas.width / this.z;
+          const fontSize = Math.min(Math.max(scale * 10, 12), 40);
+          ctx.font = `${fontSize}px Poppins`;
+          ctx.fillStyle = `rgba(255,255,255,${1 - this.z / canvas.width})`;
+          ctx.fillText(this.text, sx, sy);
+        }
+      }
+    
+      class FlyingImage {
+        constructor(img) { this.img = img; this.reset(); }
+        reset() {
+          const range = isMobile ? 0.6 : 2; // tighter cluster for mobile
+          this.x = (Math.random() - 0.5) * canvas.width * range;
+          this.y = (Math.random() - 0.5) * canvas.height * range;
+          this.z = Math.random() * canvas.width;
+          this.size = 30 + Math.random() * 40;
+        }
+        update() {
+          this.z -= isMobile ? 1.5 : 2;
+          if (this.z < 1) this.reset();
+        }
+        draw() {
+          const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
+          const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
+          const scale = canvas.width / this.z;
+          const size = this.size * scale;
+          ctx.globalAlpha = 1 - this.z / canvas.width;
+          ctx.drawImage(this.img, sx - size / 2, sy - size / 2, size, size);
+          ctx.globalAlpha = 1;
+        }
+      }
+    
+      // 💫 Adjust density for mobile/desktop
+      let stars, words, flyingImages;
+      if (isMobile) {
+        stars = Array.from({ length: 40 }, () => new Star());
+        words = Array.from({ length: 8 }, () => new Word(messages[Math.floor(Math.random() * messages.length)]));
+        flyingImages = Array.from({ length: 10 }, () => new FlyingImage(images[Math.floor(Math.random() * images.length)]));
+      } else {
+        stars = Array.from({ length: 150 }, () => new Star());
+        words = Array.from({ length: 60 }, () => new Word(messages[Math.floor(Math.random() * messages.length)]));
+        flyingImages = Array.from({ length: 80 }, () => new FlyingImage(images[Math.floor(Math.random() * images.length)]));
+      }
+    
+      function animate() {
+        ctx.fillStyle = "rgba(0,0,0,0.3)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+        stars.forEach(s => { s.update(); s.draw(); });
+        words.forEach(w => { w.update(); w.draw(); });
+        flyingImages.forEach(i => { i.update(); i.draw(); });
+    
+        requestAnimationFrame(animate);
+      }
+    
+      animate();
+    }
+    </script>
+    
