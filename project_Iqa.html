@@ -37,7 +37,8 @@
       "Happy Birthday", "Feliz Cumpleaños", "Selamat Hari Lahir", "Joyeux Anniversaire",
       "Alles Gute", "Buon Compleanno", "お誕生日おめでとう", "생일 축하해요",
       "生日快乐", "С Днём Рождения", "عيد ميلاد سعيد", "Χρόνια Πολλά",
-      "Feliz Aniversário", "शुभ जन्मदिन", "สุขสันต์วันเกิด", "Tanti Auguri"
+      "Feliz Aniversário", "शुभ जन्मदिन", "สุขสันต์วันเกิด", "Tanti Auguri",
+      "🎂", "🎈", "🎉", "🥳", "💖", "💐", "🌸", "🎁", "✨", "🍰", "❤️", "🌟", "🎶", "💝", "🩷"
     ];
     
     // 🎈 Add your image URLs here
@@ -77,6 +78,22 @@
         ctx.fill();
       }
     }
+
+    function createTextCanvas(text, fontSize = 24) {
+  const off = document.createElement("canvas");
+  const ctx2 = off.getContext("2d");
+  ctx2.font = `${fontSize}px Poppins`;
+  const w = ctx2.measureText(text).width + 10;
+  const h = fontSize + 10;
+  off.width = w;
+  off.height = h;
+  ctx2.font = `${fontSize}px Poppins`;
+  ctx2.fillStyle = "white";
+  ctx2.textBaseline = "top";
+  ctx2.fillText(text, 5, 5);
+  return off;
+}
+
     
     function startAnimation() {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -94,16 +111,19 @@
           if (this.z < 1) this.reset();
         }
         draw() {
-          const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
-          const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
-          const scale = canvas.width / this.z;
-          const fontSize = Math.min(Math.max(scale * 10, 12), 40);
-          ctx.font = `${fontSize}px Poppins`;
-          ctx.fillStyle = `rgba(255,255,255,${1 - this.z / canvas.width})`;
-          ctx.fillText(this.text, sx, sy);
-        }
+  const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
+  const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
+  const scale = canvas.width / this.z;
+  const size = Math.min(Math.max(scale * 10, 12), 40);
+  if (!this.img) this.img = createTextCanvas(this.text, size);
+  ctx.globalAlpha = 1 - this.z / canvas.width;
+  ctx.drawImage(this.img, sx, sy);
+  ctx.globalAlpha = 1;
+}
+
       }
-    
+      
+      
       class FlyingImage {
         constructor(img) { this.img = img; this.reset(); }
         reset() {
