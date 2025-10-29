@@ -18,11 +18,88 @@
     width: 100vw;
     height: 100vh;
   }
+  /* 🎛️ Top-right container */
+#topRight {
+  position: fixed;
+  top: 10px;
+  right: 15px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+  font-size: 28px;
+}
+
+/* 📨 Buttons and icons */
+#topRight button,
+#topRight a {
+  position: relative;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 12px;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  backdrop-filter: blur(5px);
+  transition: 0.3s ease;
+}
+
+#topRight button:hover,
+#topRight a:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.1);
+}
+
+/* 🔴 Notification badge */
+#mailIcon .badge {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  background-color: red;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 5px;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+/* ✨ Smooth pulsing effect for the badge */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+}
 </style>
 </head>
 <body>
-<canvas id="birthdayCanvas"></canvas>
-<script>
+  <!-- 🔊 Mute & Message Buttons -->
+  <div id="topRight">
+    <button id="muteBtn" title="Mute/Unmute">🔊</button>
+    <a href="iqa_wish.html" id="mailIcon" title="Open Birthday Wish">
+      ✉️
+      <span class="badge">1</span>
+    </a>
+  </div>
+  
+
+  <!-- 🎶 Background Music -->
+  <audio id="bgMusic" autoplay loop>
+    <source src="/assets/audio/birthday_song.mp3" type="audio/mpeg">
+  </audio>
+
+  <canvas id="birthdayCanvas"></canvas>
+  </body>
+
+  <script>
+    const audio = document.getElementById("bgMusic");
+    const muteBtn = document.getElementById("muteBtn");
+
+    muteBtn.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? "🔇" : "🔊";
+    });
+
+    // ===== Your Existing JS Below =====
     const canvas = document.getElementById('birthdayCanvas');
     const ctx = canvas.getContext('2d');
     
@@ -40,11 +117,9 @@
       "Feliz Aniversário", "शुभ जन्मदिन", "สุขสันต์วันเกิด", "Tanti Auguri",
       "🎂", "🎈", "🎉", "🥳", "💖", "💐", "🌸", "🎁", "✨", "🍰", "❤️", "🌟", "🎶", "💝", "🩷"
     ];
-    
-    // 🎈 Add your image URLs here
-    const totalImages = 29; // adjust to how many you have
+
+    const totalImages = 29;
     const imageSources = Array.from({ length: totalImages }, (_, i) => `/assets/images/iqa/${i + 1}.jpg`);
-    
     const images = [];
     let loaded = 0;
     imageSources.forEach(src => {
@@ -56,7 +131,7 @@
       };
       images.push(img);
     });
-    
+
     class Star {
       constructor() { this.reset(); }
       reset() {
@@ -80,54 +155,50 @@
     }
 
     function createTextCanvas(text, fontSize = 24) {
-  const off = document.createElement("canvas");
-  const ctx2 = off.getContext("2d");
-  ctx2.font = `${fontSize}px Poppins`;
-  const w = ctx2.measureText(text).width + 10;
-  const h = fontSize + 10;
-  off.width = w;
-  off.height = h;
-  ctx2.font = `${fontSize}px Poppins`;
-  ctx2.fillStyle = "white";
-  ctx2.textBaseline = "top";
-  ctx2.fillText(text, 5, 5);
-  return off;
-}
+      const off = document.createElement("canvas");
+      const ctx2 = off.getContext("2d");
+      ctx2.font = `${fontSize}px Poppins`;
+      const w = ctx2.measureText(text).width + 10;
+      const h = fontSize + 10;
+      off.width = w;
+      off.height = h;
+      ctx2.font = `${fontSize}px Poppins`;
+      ctx2.fillStyle = "white";
+      ctx2.textBaseline = "top";
+      ctx2.fillText(text, 5, 5);
+      return off;
+    }
 
-    
     function startAnimation() {
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    
       class Word {
         constructor(text) { this.text = text; this.reset(); }
         reset() {
-          const range = isMobile ? 0.5 : 2; // smaller spawn range for mobile
+          const range = isMobile ? 0.5 : 2;
           this.x = (Math.random() - 0.5) * canvas.width * range;
           this.y = (Math.random() - 0.5) * canvas.height * range;
           this.z = Math.random() * canvas.width;
         }
         update() {
-          this.z -= isMobile ? 1.2 : 2; // slower on mobile
+          this.z -= isMobile ? 1.2 : 2;
           if (this.z < 1) this.reset();
         }
         draw() {
-  const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
-  const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
-  const scale = canvas.width / this.z;
-  const size = Math.min(Math.max(scale * 10, 12), 40);
-  if (!this.img) this.img = createTextCanvas(this.text, size);
-  ctx.globalAlpha = 1 - this.z / canvas.width;
-  ctx.drawImage(this.img, sx, sy);
-  ctx.globalAlpha = 1;
-}
-
+          const sx = (this.x / this.z) * canvas.width + canvas.width / 2;
+          const sy = (this.y / this.z) * canvas.height + canvas.height / 2;
+          const scale = canvas.width / this.z;
+          const size = Math.min(Math.max(scale * 10, 12), 40);
+          if (!this.img) this.img = createTextCanvas(this.text, size);
+          ctx.globalAlpha = 1 - this.z / canvas.width;
+          ctx.drawImage(this.img, sx, sy);
+          ctx.globalAlpha = 1;
+        }
       }
-      
-      
+
       class FlyingImage {
         constructor(img) { this.img = img; this.reset(); }
         reset() {
-          const range = isMobile ? 0.6 : 2; // tighter cluster for mobile
+          const range = isMobile ? 0.6 : 2;
           this.x = (Math.random() - 0.5) * canvas.width * range;
           this.y = (Math.random() - 0.5) * canvas.height * range;
           this.z = Math.random() * canvas.width;
@@ -147,8 +218,7 @@
           ctx.globalAlpha = 1;
         }
       }
-    
-      // 💫 Adjust density for mobile/desktop
+
       let stars, words, flyingImages;
       if (isMobile) {
         stars = Array.from({ length: 40 }, () => new Star());
@@ -159,19 +229,18 @@
         words = Array.from({ length: 60 }, () => new Word(messages[Math.floor(Math.random() * messages.length)]));
         flyingImages = Array.from({ length: 80 }, () => new FlyingImage(images[Math.floor(Math.random() * images.length)]));
       }
-    
+
       function animate() {
         ctx.fillStyle = "rgba(0,0,0,0.3)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
         stars.forEach(s => { s.update(); s.draw(); });
         words.forEach(w => { w.update(); w.draw(); });
         flyingImages.forEach(i => { i.update(); i.draw(); });
-    
+
         requestAnimationFrame(animate);
       }
-    
+
       animate();
     }
-    </script>
-    
+  </script>

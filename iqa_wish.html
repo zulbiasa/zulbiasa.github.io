@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎂 Happy Birthday!</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #0b0c10;
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    .container {
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+    }
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      background: #66fcf1;
+      color: #0b0c10;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #45a29e;
+    }
+    #birthday-message {
+      display: none;
+      font-size: 2rem;
+      animation: fadeIn 2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="security">
+      <h2>🔐 Security Check</h2>
+      <p id="question">What’s your favorite color?</p>
+      <input type="text" id="answer" placeholder="Your answer..." />
+      <br>
+      <button onclick="checkAnswer()">Submit</button>
+      <p id="error" style="color: red; display: none;">❌ Wrong answer! Try again.</p>
+    </div>
+
+    <div id="birthday-message">
+      🎉 𝓗𝓪𝓹𝓹𝔂 𝓑𝓲𝓻𝓽𝓱𝓭𝓪𝔂, 𝓘𝓺𝓪! 💖<br>
+      𝓦𝓲𝓼𝓱𝓲𝓷𝓰 𝔂𝓸𝓾 𝓪 𝓫𝓲𝓻𝓽𝓱𝓭𝓪𝔂 𝓯𝓲𝓵𝓵𝓮𝓭 𝔀𝓲𝓽𝓱 𝓱𝓪𝓹𝓹𝓲𝓷𝓮𝓼𝓼, 𝓵𝓸𝓿𝓮, <br> 
+      𝓪𝓷𝓭 𝓫𝓵𝓮𝓼𝓼𝓲𝓷𝓰𝓼 𝓯𝓻𝓸𝓶 𝓐𝓵𝓵𝓪𝓱. 𝓗𝓪𝓿𝓮 𝓪 𝔀𝓸𝓷𝓭𝓮𝓻𝓯𝓾𝓵 𝓭𝓪𝔂! 🌸✨
+    </div>
+  </div>
+
+  <script>
+    // Array of questions and answers
+    const questions = [
+      { q: "What’s your favorite color?", a: "pink" },
+      { q: "Anak ke berapa? (nombor)", a: "6" },
+      { q: "Matcha Rasa?", a: "daun" },
+      { q: "No Matrix Degree?", a: "TG23046" }
+    ];
+
+    let current = 0;
+
+    function checkAnswer() {
+      const input = document.getElementById("answer").value.trim().toLowerCase();
+      const error = document.getElementById("error");
+
+      if (input === questions[current].a.toLowerCase()) {
+        current++;
+        error.style.display = "none";
+        document.getElementById("answer").value = "";
+
+        // If all answered correctly
+        if (current >= questions.length) {
+          document.getElementById("security").style.display = "none";
+          document.getElementById("birthday-message").style.display = "block";
+          document.body.style.background = "radial-gradient(circle at center, #02010a, #1b2735, #090a0f)";
+          createConfetti();
+        } else {
+          // Next question
+          document.getElementById("question").textContent = questions[current].q;
+        }
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    // simple confetti emoji animation 🎊
+    function createConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const emoji = document.createElement("div");
+        emoji.textContent = ["🎊", "🎉", "✨", "💖", "🎂"][Math.floor(Math.random() * 5)];
+        emoji.style.position = "fixed";
+        emoji.style.left = Math.random() * 100 + "vw";
+        emoji.style.top = Math.random() * -20 + "vh";
+        emoji.style.fontSize = Math.random() * 24 + 16 + "px";
+        emoji.style.animation = `fall ${Math.random() * 3 + 3}s linear infinite`;
+        document.body.appendChild(emoji);
+      }
+
+      const style = document.createElement("style");
+      style.textContent = `
+        @keyframes fall {
+          to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  </script>
+</body>
+</html>
