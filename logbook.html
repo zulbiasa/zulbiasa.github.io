@@ -198,7 +198,7 @@
         const out = await pdfDoc.save();
         const blob = new Blob([out], {type: 'application/pdf'});
         const now = new Date();
-        const name = `LOGBOOK_${now.getDate().toString().padStart(2,'0')}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getFullYear()}.pdf`;
+        const name = `LOGBOOK_${field_date}.pdf`;
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = name;
