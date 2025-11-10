@@ -117,6 +117,13 @@
 
     document.getElementById('downloadBtn').addEventListener('click', async ()=>{
       try{
+
+        // require date selected
+        if(!getVal('field_date')){
+          alert('Please select a date before downloading.');
+          return;
+        }
+        
         const templateUrl = 'assets/documents/logbook_template.pdf';
         const resp = await fetch(templateUrl);
         const bytes = await resp.arrayBuffer();
