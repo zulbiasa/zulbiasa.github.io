@@ -20,37 +20,6 @@ h2 {
     margin-bottom: 30px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .timeline {
-        padding-left: 20px;
-        margin-left: 0; /* Remove left margin for smaller screens */
-    }
-
-    .timeline-line {
-        left: 50px; /* Adjust for smaller screens */
-    }
-
-    .timeline-item {
-        width: 90%; /* Make items wider on smaller screens */
-        padding: 15px; /* Reduce padding for smaller screens */
-    }
-
-    h2 {
-        font-size: 1.5em; /* Adjust heading size for smaller screens */
-    }
-
-    small {
-        font-size: 0.8em; /* Smaller font size for small text */
-    }
-
-    button {
-        width: 100%; /* Make buttons full width on mobile */
-        padding: 15px; /* Increase padding for better touch targets */
-        font-size: 1.2em; /* Increase font size for readability */
-    }
-}
-
 small {
     display: block;
     color: gray;
@@ -58,10 +27,15 @@ small {
 }
 
 .cta-section {
-    background: #FF4081;
-    color: white;
-    padding: 20px;
-    text-align: center;
+      background: #333;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+.cta-section h3 {
+  font-size: 2em;
+  margin-bottom: 15px;
 }
 
 button {
@@ -147,7 +121,7 @@ button {
 
 .timeline-item .dot {
     position: absolute;
-    top: 38px;
+    top: 32px;
     left: -40px; /* Ensures the dot aligns perfectly with the line */
     width: 18px; /* Slightly larger for better visibility */
     height: 18px;
@@ -206,7 +180,7 @@ button {
 }
 
 button {
-    --color: #aa1d4c;
+    --color: #c40b0b;
     font-family: inherit;
     display: inline-block;
     width: 8em;
@@ -255,6 +229,62 @@ button:active:before {
 }
 
 /* Additional Responsive Adjustments */
+
+@media (max-width: 1440px) {
+    .timeline {
+        padding-left: 20px;
+        margin-left: 0; /* Remove left margin for smaller screens */
+    }
+
+    .timeline-line {
+      left: 100px;
+      border-left: none;
+      border-left: 2px solid #FF4081; /* Add dashed line style */
+    }
+
+    .timeline-item .dot {
+      left: -54px;
+    }
+
+    .timeline-item {
+        padding: 15px; /* Reduce padding for smaller screens */
+    }
+
+    h2 {
+        font-size: 1.5em; /* Adjust heading size for smaller screens */
+    }
+
+    small {
+        font-size: 0.8em; /* Smaller font size for small text */
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .timeline {
+        padding-left: 20px;
+        margin-left: 0; /* Remove left margin for smaller screens */
+    }
+
+    .timeline-line {
+      left: 60px;
+      border-left: none;
+      border-right: 2px solid #ff4081;
+    }
+
+    .timeline-item .dot {
+      left: -52px;
+    }
+
+    h2 {
+        font-size: 1.2em; /* Further adjust heading size for very small screens */
+    }
+
+    button {
+        font-size: 1em; /* Adjust button font size for very small screens */
+    }
+}
+
 @media (max-width: 768px) {
     .timeline {
         padding-left: 20px;
@@ -262,13 +292,13 @@ button:active:before {
     }
 
     .timeline-line {
-      left: 55px;
+      left: 34px;
       border-left: none;
-      border-left: 2px solid #FF4081; /* Add dashed line style */
+      border-left: 0px solid #FF4081; /* Add dashed line style */
     }
 
     .timeline-item .dot {
-      left: -32px;
+      left: -52px;
     }
 
     .timeline-item {
@@ -462,36 +492,24 @@ body.dark-mode .timeline-item.active {
       <div class="timeline-item active hidden">
         <div class="dot"></div>
         <h3>Universiti Teknikal Malaysia Melaka (UTeM), Melaka</h3>
-        <p>Bachelor's in Software Engineering</p>
-        <small>2023 - Present</small>
+        <p>Bachelor's in Computer Science (Software Development) with Honours</p>
+        <small>2023 - 2026</small>
         <span class="current-status">Currently Studying</span>
       </div>
       <div class="timeline-item completed hidden">
         <div class="dot"></div>
         <h3>Politeknik Seberang Perai, Pulau Penang</h3>
-        <p>Diploma Digital Technology</p>
+        <p>Diploma Information Technology (Digital Technology)</p>
         <small>2020 - 2022</small>
       </div>
       <div class="timeline-item completed hidden">
         <div class="dot"></div>
         <h3>SMK Yam Tuan Radin, Negeri Sembilan</h3>
-        <p>Science Stream (SPM)</p>
+        <p>Pure Science Stream (SPM)</p>
         <small>2018 - 2019</small>
       </div>
     </div>
   </section>
-<!-- 
-  <section class="section education-progress">
-    <h2>My Education Journey</h2>
-    <div class="timeline1">
-      <div class="container1 right">
-        <div class="content">
-          <h2>2017</h2>
-          <p>Lorem ipsum..</p>
-        </div>
-      </div>
-      </div>
-  </section> -->
   
   
   <!-- Experience Section -->
