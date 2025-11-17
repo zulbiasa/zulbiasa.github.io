@@ -256,22 +256,22 @@ document.getElementById("signatureInput").addEventListener("change", async (e) =
           if(maxUsed > 0) yOffset += maxUsed;
         }
 
-        // Insert signature if available
-if (extractedSignature) {
-  const pngBytes = await fetch(extractedSignature).then(r => r.arrayBuffer());
-  const pngImage = await pdfDoc.embedPng(pngBytes);
+//         // Insert signature if available
+// if (extractedSignature) {
+//   const pngBytes = await fetch(extractedSignature).then(r => r.arrayBuffer());
+//   const pngImage = await pdfDoc.embedPng(pngBytes);
 
-  // Resize to fit nicely (you can adjust)
-  const sigWidth = 120;
-  const sigHeight = (pngImage.height / pngImage.width) * 120;
+//   // Resize to fit nicely (you can adjust)
+//   const sigWidth = 120;
+//   const sigHeight = (pngImage.height / pngImage.width) * 120;
 
-  page.drawImage(pngImage, {
-    x: 120,   // your position from FIELD_MAP comment
-    y: 110,
-    width: sigWidth,
-    height: sigHeight
-  });
-}
+//   page.drawImage(pngImage, {
+//     x: 120,   // your position from FIELD_MAP comment
+//     y: 110,
+//     width: sigWidth,
+//     height: sigHeight
+//   });
+// }
 
 
         const out = await pdfDoc.save();
