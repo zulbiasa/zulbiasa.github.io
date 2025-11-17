@@ -45,10 +45,6 @@
             <td><h5>Maximum 8 entries</h5></td>
         </row>
     </table>
-
-    <!-- <label>Signature (PNG/JPG)</label>
-<input type="file" id="signatureInput" accept="image/*">
-<canvas id="sigCanvas" style="display:none;"></canvas> -->
     
 
     <div class="controls">
@@ -126,57 +122,8 @@
       document.getElementById('field_day').value = dayName;
     });
 
-    let extractedSignature = null;
-
-document.getElementById("signatureInput").addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const img = new Image();
-  const url = URL.createObjectURL(file);
-
-  img.onload = () => {
-    const canvas = document.getElementById("sigCanvas");
-    const ctx = canvas.getContext("2d");
-
-    canvas.width = img.width;
-    canvas.height = img.height;
-
-    ctx.drawImage(img, 0, 0);
-
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imgData.data;
-
-    // Remove near-white background
-    for (let i = 0; i < data.length; i += 4) {
-      const r = data[i];
-      const g = data[i + 1];
-      const b = data[i + 2];
-
-      // If white-ish → make transparent
-      if (r > 200 && g > 200 && b > 200) {
-        data[i + 3] = 0;
-      }
-    }
-
-    ctx.putImageData(imgData, 0, 0);
-
-    extractedSignature = canvas.toDataURL("image/png");
-    alert("Signature processed and ready!");
-  };
-
-  img.src = url;
-});
-
-
     document.getElementById('downloadBtn').addEventListener('click', async ()=>{
       try{
-
-        // require date selected
-        //if(!getVal('field_date')){
-        //  alert('Please select a date before downloading.');
-        //  return;
-        //}
         
         const templateUrl = 'assets/documents/logbook_template.pdf';
         const resp = await fetch(templateUrl);
@@ -255,24 +202,6 @@ document.getElementById("signatureInput").addEventListener("change", async (e) =
           let maxUsed = Math.max(usedEntry, usedDesc);
           if(maxUsed > 0) yOffset += maxUsed;
         }
-
-//         // Insert signature if available
-// if (extractedSignature) {
-//   const pngBytes = await fetch(extractedSignature).then(r => r.arrayBuffer());
-//   const pngImage = await pdfDoc.embedPng(pngBytes);
-
-//   // Resize to fit nicely (you can adjust)
-//   const sigWidth = 120;
-//   const sigHeight = (pngImage.height / pngImage.width) * 120;
-
-//   page.drawImage(pngImage, {
-//     x: 120,   // your position from FIELD_MAP comment
-//     y: 110,
-//     width: sigWidth,
-//     height: sigHeight
-//   });
-// }
-
 
         const out = await pdfDoc.save();
         const blob = new Blob([out], {type: 'application/pdf'});
