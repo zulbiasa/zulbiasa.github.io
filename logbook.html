@@ -45,6 +45,23 @@
             <td><h5>Maximum 8 entries</h5></td>
         </row>
     </table>
+
+    <h3>Signature</h3>
+<canvas id="signature-pad" width="250" height="150" 
+  style="
+    border:1px solid #ccc;
+    width:250px;
+    height:150px;
+    background:white;
+    border-radius:8px;
+  ">
+</canvas>
+
+
+<div style="margin-top:10px;">
+  <button id="clearSig" class="secondary">Clear Signature</button>
+</div>
+
     
 
     <div class="controls">
@@ -54,8 +71,35 @@
     <footer>© 2025 Zulhelmi Afendi All right reserved</footer>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   <script>
+    // === Signature Pad Setup ===
+const canvas = document.getElementById("signature-pad");
+
+// Auto-resize canvas to correct DPI
+function resizeCanvas() {
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+    // Set EXACT internal resolution for sharp lines
+    canvas.width = 250 * ratio;
+    canvas.height = 150 * ratio;
+
+    canvas.getContext("2d").scale(ratio, ratio);
+}
+
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+// Initialize signature pad
+const signaturePad = new SignaturePad(canvas);
+
+document.getElementById("clearSig").addEventListener("click", () => {
+  signaturePad.clear();
+});
+
+
+
     const FIELD_MAP = {
       field_day: { x: 290, y: 760, size: 10 },
       field_week: { x: 490, y: 760, size: 10 },
@@ -202,6 +246,22 @@
           let maxUsed = Math.max(usedEntry, usedDesc);
           if(maxUsed > 0) yOffset += maxUsed;
         }
+
+        // === Add Signature to PDF ===
+if (!signaturePad.isEmpty()) {
+    const dataURL = signaturePad.toDataURL("image/png");
+    const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
+    const sigImage = await pdfDoc.embedPng(sigImageBytes);
+
+    // Position of your signature in PDF
+    page.drawImage(sigImage, {
+        x: 100,     // adjust X position
+        y: 100,      // adjust Y position
+        width: 100, // resize signature
+        height: 70
+    });
+}
+
 
         const out = await pdfDoc.save();
         const blob = new Blob([out], {type: 'application/pdf'});
