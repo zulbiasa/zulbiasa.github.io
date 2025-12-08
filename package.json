@@ -1,0 +1,12 @@
+{
+  "name": "logbook-ai-generator",
+  "version": "1.0.0",
+  "description": "Dependencies for the logbook AI function",
+  "main": "netlify/generate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/genai": "^0.1.0"
+  }
+}
