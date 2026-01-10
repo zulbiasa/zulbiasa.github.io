@@ -8,9 +8,9 @@
   <meta name="google" content="notranslate" />
   <title>Logbook Filler</title>
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
-<link rel="manifest" href="assets/site.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
+  <link rel="manifest" href="assets/site.webmanifest">
   <style>
     :root{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     body{margin:0;background:#f3f4f6;color:#111}
@@ -21,9 +21,14 @@
     textarea{min-height:40px}
     button{background:#0b5fff;color:white;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
     button.secondary{background:#6b7280}
+    button.ghost{background:transparent;color:#0b5fff;border:1px solid #0b5fff}
     .time-entry{border:1px solid #ddd;background:white;padding:10px;margin-top:10px;border-radius:8px}
     .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
     footer{margin-top:20px;font-size:13px;color:#666;text-align:center}
+    /* simple modal */
+    .modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;}
+    .modal .card { background:white; padding:16px; width:420px; border-radius:8px; box-shadow:0 6px 24px rgba(0,0,0,0.15);}
+    .small{font-size:13px;color:#666;margin-top:6px}
   </style>
 </head>
 <body>
@@ -40,66 +45,65 @@
     <div id="timeEntries"></div>
 
     <table>
-        <row>
+        <tr>
             <td><button id="addEntry">+ Add Time Entry</button></td>
-            <td><h5>Maximum 8 entries</h5></td>
-        </row>
+            <td style="padding-left:12px"><h5 style="margin:0">Maximum 8 entries</h5></td>
+        </tr>
     </table>
 
     <h3>Signature</h3>
-<canvas id="signature-pad" width="250" height="150" 
-  style="
-    border:1px solid #ccc;
-    width:250px;
-    height:150px;
-    background:white;
-    border-radius:8px;
-  ">
-</canvas>
+    <canvas id="signature-pad" width="250" height="150" 
+      style="border:1px solid #ccc; width:250px; height:150px; background:white; border-radius:8px;">
+    </canvas>
 
-
-<div style="margin-top:10px;">
-  <button id="clearSig" class="secondary">Clear Signature</button>
-</div>
-
-    
+    <div style="margin-top:10px;">
+      <button id="clearSig" class="secondary">Clear Signature</button>
+    </div>
 
     <div class="controls">
+      <button id="aiFillBtn" class="ghost">AI Fill (suggest entries)</button>
       <button id="downloadBtn">Download filled PDF</button>
     </div>
 
     <footer>© 2025 Zulhelmi Afendi All right reserved</footer>
   </div>
 
+  <!-- AI Prompt Modal -->
+  <div id="aiModal" class="modal">
+    <div class="card">
+      <h3 style="margin:0 0 8px 0">AI Autofill</h3>
+      <label>Short prompt (e.g. "research, meeting, coding"): <small class="small">optional — AI will infer from date if blank</small></label>
+      <input id="aiPrompt" placeholder="e.g. worked on prototype, meeting with supervisor, testing">
+      <label>Max entries (1-8)</label>
+      <input id="aiCount" type="number" min="1" max="8" value="3">
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+        <button id="aiCancel" class="secondary">Cancel</button>
+        <button id="aiGenerate">Generate</button>
+      </div>
+      <div id="aiStatus" class="small" style="margin-top:8px;display:none"></div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   <script>
     // === Signature Pad Setup ===
-const canvas = document.getElementById("signature-pad");
+    const canvas = document.getElementById("signature-pad");
 
-// Auto-resize canvas to correct DPI
-function resizeCanvas() {
-    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    function resizeCanvas() {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = 250 * ratio;
+        canvas.height = 150 * ratio;
+        canvas.style.width = '250px';
+        canvas.style.height = '150px';
+        canvas.getContext("2d").scale(ratio, ratio);
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    const signaturePad = new SignaturePad(canvas);
+    document.getElementById("clearSig").addEventListener("click", () => signaturePad.clear());
 
-    // Set EXACT internal resolution for sharp lines
-    canvas.width = 250 * ratio;
-    canvas.height = 150 * ratio;
-
-    canvas.getContext("2d").scale(ratio, ratio);
-}
-
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-// Initialize signature pad
-const signaturePad = new SignaturePad(canvas);
-
-document.getElementById("clearSig").addEventListener("click", () => {
-  signaturePad.clear();
-});
-
-
-
+    // === Field map & entry UI ===
     const FIELD_MAP = {
       field_day: { x: 290, y: 760, size: 10 },
       field_week: { x: 490, y: 760, size: 10 },
@@ -139,6 +143,7 @@ document.getElementById("clearSig").addEventListener("click", () => {
       entryCount++;
       const div = document.createElement('div');
       div.className = 'time-entry';
+      div.dataset.index = entryCount;
       div.innerHTML = `
         <label>Time</label>
         <input type="time" id="t${entryCount}" step="60">
@@ -150,63 +155,63 @@ document.getElementById("clearSig").addEventListener("click", () => {
       entriesDiv.appendChild(div);
     }
 
+    // create initial 3
     for(let i=0;i<3;i++) createTimeEntry();
-
-    addEntryBtn.addEventListener('click', ()=>{
-      if(entryCount<8) createTimeEntry();
-      else alert('Maximum 8 entries allowed');
-    });
+    addEntryBtn.addEventListener('click', ()=>{ if(entryCount<8) createTimeEntry(); else alert('Maximum 8 entries allowed'); });
 
     document.getElementById('field_date').addEventListener('change', function(){
       const dateVal = this.value;
       if(!dateVal) return;
-      const d = new Date(dateVal);
+      const d = new Date(dateVal + 'T00:00:00'); // avoid timezone issues
       const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      const dayName = days[d.getUTCDay()];
+      const dayName = days[d.getDay()];
       document.getElementById('field_day').value = dayName;
     });
 
+    // === Drawing text into PDF helpers (kept from your original) ===
+    function wrapTextWidth(text, maxWidth, fontSize){
+      const approxCharWidth = fontSize * 0.55;
+      const maxChars = Math.floor(maxWidth / approxCharWidth);
+      const words = text.split(' ');
+      let lines = [], currentLine = '';
+      for(const word of words){
+        if((currentLine + word).length > maxChars){
+          lines.push(currentLine.trim());
+          currentLine = word + ' ';
+        } else currentLine += word + ' ';
+      }
+      lines.push(currentLine.trim());
+      return lines;
+    }
+
+    function drawText(page, x, y, text, size=10, align='left', maxWidth=200){
+      const lines = wrapTextWidth(text, maxWidth, size);
+      let currentY = y;
+      for(let i=0;i<lines.length;i++){
+        const line = lines[i];
+        let drawX = x;
+        if(align==='center'){
+          const textWidth = line.length * size * 0.55;
+          drawX = x - textWidth/2;
+        }
+        page.drawText(line, { x: drawX, y: currentY, size });
+        currentY -= (size + 2);
+      }
+      return (lines.length - 1) * 10;
+    }
+
+    function getVal(id){ return document.getElementById(id)?.value || ''; }
+    function formatDate(val){ if(!val) return ''; const d = new Date(val + 'T00:00:00'); return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear(); }
+    function formatTime(timeStr){ if(!timeStr) return ''; let [h,m] = timeStr.split(':').map(Number); const ampm = h>=12 ? 'PM':'AM'; h = h%12 || 12; return `${h}:${m.toString().padStart(2,'0')} ${ampm}`; }
+
+    // === Download PDF ===
     document.getElementById('downloadBtn').addEventListener('click', async ()=>{
       try{
-        
         const templateUrl = 'assets/documents/logbook_template.pdf';
         const resp = await fetch(templateUrl);
         const bytes = await resp.arrayBuffer();
         const pdfDoc = await PDFLib.PDFDocument.load(bytes);
         const page = pdfDoc.getPages()[0];
-
-        const getVal = id => document.getElementById(id)?.value || '';
-
-        function wrapTextWidth(text, maxWidth, fontSize){
-          const approxCharWidth = fontSize * 0.55;
-          const maxChars = Math.floor(maxWidth / approxCharWidth);
-          const words = text.split(' ');
-          let lines = [], currentLine = '';
-          for(const word of words){
-            if((currentLine + word).length > maxChars){
-              lines.push(currentLine.trim());
-              currentLine = word + ' ';
-            } else currentLine += word + ' ';
-          }
-          lines.push(currentLine.trim());
-          return lines;
-        }
-
-        function drawText(x, y, text, size=10, align='left', maxWidth=200){
-          const lines = wrapTextWidth(text, maxWidth, size);
-          let currentY = y;
-          for(let i=0;i<lines.length;i++){
-            const line = lines[i];
-            let drawX = x;
-            if(align==='center'){
-              const textWidth = line.length * size * 0.55;
-              drawX = x - textWidth/2;
-            }
-            page.drawText(line, { x: drawX, y: currentY, size });
-            currentY -= (size + 2);
-          }
-          return (lines.length - 1) * 10; // total height consumed
-        }
 
         const vals = {
           field_day: getVal('field_day'),
@@ -216,80 +221,117 @@ document.getElementById("clearSig").addEventListener("click", () => {
         };
 
         let yOffset = 0;
-        drawText(FIELD_MAP.field_date.x, FIELD_MAP.field_date.y, vals.field_date, FIELD_MAP.field_date.size);
-        drawText(FIELD_MAP.field_day.x, FIELD_MAP.field_day.y, vals.field_day, FIELD_MAP.field_day.size);
-        drawText(FIELD_MAP.field_week.x, FIELD_MAP.field_week.y, vals.field_week, FIELD_MAP.field_week.size);
-        drawText(FIELD_MAP.field_date2.x, FIELD_MAP.field_date2.y, vals.field_date2, FIELD_MAP.field_date2.size);
-
+        drawText(page, FIELD_MAP.field_date.x, FIELD_MAP.field_date.y, vals.field_date, FIELD_MAP.field_date.size);
+        drawText(page, FIELD_MAP.field_day.x, FIELD_MAP.field_day.y, vals.field_day, FIELD_MAP.field_day.size);
+        drawText(page, FIELD_MAP.field_week.x, FIELD_MAP.field_week.y, vals.field_week, FIELD_MAP.field_week.size);
+        drawText(page, FIELD_MAP.field_date2.x, FIELD_MAP.field_date2.y, vals.field_date2, FIELD_MAP.field_date2.size);
 
         for(let i=1;i<=entryCount;i++){
-            
-          const timeKey = `t${i}`;
-          const entryKey = `e${i}`;
-          const descKey = `d${i}`;
+          const tPos = FIELD_MAP[`t${i}`];
+          const ePos = FIELD_MAP[`e${i}`];
+          const dPos = FIELD_MAP[`d${i}`];
 
-          const tPos = FIELD_MAP[timeKey];
-          const ePos = FIELD_MAP[entryKey];
-          const dPos = FIELD_MAP[descKey];
+          const timeText = formatTime(getVal(`t${i}`));
+          const entryText = getVal(`e${i}`);
+          const descText = getVal(`d${i}`);
 
-          let timeText = formatTime(getVal(timeKey));
-          let entryText = getVal(entryKey);
-          let descText = getVal(descKey);
-
-          let usedEntry = 0;
-          let usedDesc = 0;
-
-          if(timeText) drawText(tPos.x, tPos.y - yOffset, timeText, tPos.size, tPos.align, 180);
-          if(entryText) usedEntry = drawText(ePos.x, ePos.y - yOffset, entryText, ePos.size, ePos.align, 160);
-          if(descText) usedDesc = drawText(dPos.x, dPos.y - yOffset, descText, dPos.size, dPos.align, 160);
+          let usedEntry = 0, usedDesc = 0;
+          if(timeText && tPos) drawText(page, tPos.x, tPos.y - yOffset, timeText, tPos.size, tPos.align, 180);
+          if(entryText && ePos) usedEntry = drawText(page, ePos.x, ePos.y - yOffset, entryText, ePos.size, ePos.align, 160);
+          if(descText && dPos) usedDesc = drawText(page, dPos.x, dPos.y - yOffset, descText, dPos.size, dPos.align, 160);
 
           let maxUsed = Math.max(usedEntry, usedDesc);
           if(maxUsed > 0) yOffset += maxUsed;
         }
 
-        // === Add Signature to PDF ===
-if (!signaturePad.isEmpty()) {
-    const dataURL = signaturePad.toDataURL("image/png");
-    const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
-    const sigImage = await pdfDoc.embedPng(sigImageBytes);
-
-    // Position of your signature in PDF
-    page.drawImage(sigImage, {
-        x: 100,     // adjust X position
-        y: 100,      // adjust Y position
-        width: 100, // resize signature
-        height: 70
-    });
-}
-
+        // signature
+        if (!signaturePad.isEmpty()) {
+          const dataURL = signaturePad.toDataURL("image/png");
+          const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
+          const sigImage = await pdfDoc.embedPng(sigImageBytes);
+          page.drawImage(sigImage, { x: 100, y: 100, width: 100, height: 70 });
+        }
 
         const out = await pdfDoc.save();
         const blob = new Blob([out], {type: 'application/pdf'});
-        const now = new Date();
         const selectedDate = formatDate(getVal('field_date')).replace(/\//g, '-');
-        const name = `LOGBOOK_${selectedDate}.pdf`;
+        const name = `LOGBOOK_${selectedDate || 'UNSET'}.pdf`;
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         a.download = name;
         a.click();
       }catch(e){
-        alert('Error generating PDF: '+e.message);
+        alert('Error generating PDF: ' + (e.message || e));
       }
     });
 
-    function formatDate(val){
-      if(!val) return '';
-      const d = new Date(val);
-      return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear();
+    // === AI modal logic ===
+    const aiModal = document.getElementById('aiModal');
+    const aiFillBtn = document.getElementById('aiFillBtn');
+    const aiCancel = document.getElementById('aiCancel');
+    const aiGenerate = document.getElementById('aiGenerate');
+    const aiStatus = document.getElementById('aiStatus');
+
+    aiFillBtn.addEventListener('click', ()=> {
+      aiStatus.style.display = 'none';
+      document.getElementById('aiPrompt').value = '';
+      document.getElementById('aiCount').value = Math.min(3, 8);
+      aiModal.style.display = 'flex';
+    });
+    aiCancel.addEventListener('click', ()=> aiModal.style.display = 'none');
+
+    // function to populate UI entries from AI result
+    function applyAIEntries(entries){
+      // clear existing entries and recreate to match number of entries
+      entriesDiv.innerHTML = '';
+      entryCount = 0;
+      const max = Math.min(8, entries.length);
+      for(let i=0;i<max;i++){
+        createTimeEntry();
+        const idx = i+1;
+        const e = entries[i];
+        if(e.time) document.getElementById(`t${idx}`).value = e.time;
+        if(e.title) document.getElementById(`e${idx}`).value = e.title;
+        if(e.description) document.getElementById(`d${idx}`).value = e.description;
+      }
     }
 
-    function formatTime(timeStr){
-      if(!timeStr) return '';
-      let [h,m] = timeStr.split(':').map(Number);
-      const ampm = h>=12 ? 'PM':'AM';
-      h = h%12 || 12;
-      return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
-    }
+    aiGenerate.addEventListener('click', async ()=>{
+      const prompt = document.getElementById('aiPrompt').value.trim();
+      let count = parseInt(document.getElementById('aiCount').value) || 3;
+      count = Math.max(1, Math.min(8, count));
+      const date = getVal('field_date');
+
+      aiStatus.style.display = 'block';
+      aiStatus.textContent = 'Generating suggestions...';
+
+      try{
+        // call serverless endpoint (you must deploy this)
+        const resp = await fetch('/api/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, count, date })
+        });
+        if(!resp.ok) {
+          const text = await resp.text();
+          throw new Error('Server error: ' + text);
+        }
+        const json = await resp.json();
+        if(json?.entries && Array.isArray(json.entries) && json.entries.length){
+          applyAIEntries(json.entries);
+          aiStatus.textContent = 'Done — entries populated.';
+        } else {
+          throw new Error('AI returned no entries.');
+        }
+      }catch(err){
+        aiStatus.textContent = 'Error: ' + (err.message || err);
+      } finally {
+        setTimeout(()=>{ aiModal.style.display = 'none'; aiStatus.style.display='none'; }, 1200);
+      }
+    });
+
+    // optional: allow pressing ESC to close modal
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') aiModal.style.display='none'; });
 
   </script>
 </body>
