@@ -55,7 +55,8 @@ Generate ${n} entries.
     const finalPrompt = systemInstruction + "\n\n" + userContent;
 
     try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        // Use specific version to avoid 'not found' errors with aliases
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${GEMINI_API_KEY}`;
         console.log("Sending request to Gemini...");
 
         // Call Gemini API
