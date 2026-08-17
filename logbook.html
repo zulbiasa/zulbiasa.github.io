@@ -126,30 +126,6 @@
       field_day: { x: 290, y: 760, size: 10 },
       field_week: { x: 490, y: 760, size: 10 },
       field_date: { x: 130, y: 760, size: 10 },
-      t1: { x: 102, y: 700, size: 9, align: 'center' },
-      e1: { x: 140, y: 700, size: 10 },
-      d1: { x: 335, y: 700, size: 10 },
-      t2: { x: 102, y: 640, size: 9, align: 'center' },
-      e2: { x: 140, y: 640, size: 10 },
-      d2: { x: 335, y: 640, size: 10 },
-      t3: { x: 102, y: 575, size: 9, align: 'center' },
-      e3: { x: 140, y: 575, size: 10 },
-      d3: { x: 335, y: 575, size: 10 },
-      t4: { x: 102, y: 510, size: 9, align: 'center' },
-      e4: { x: 140, y: 510, size: 10 },
-      d4: { x: 335, y: 510, size: 10 },
-      t5: { x: 102, y: 435, size: 9, align: 'center' },
-      e5: { x: 140, y: 435, size: 10 },
-      d5: { x: 335, y: 435, size: 10 },
-      t6: { x: 102, y: 370, size: 9, align: 'center' },
-      e6: { x: 140, y: 370, size: 10 },
-      d6: { x: 335, y: 370, size: 10 },
-      t7: { x: 102, y: 305, size: 9, align: 'center' },
-      e7: { x: 140, y: 305, size: 10 },
-      d7: { x: 335, y: 305, size: 10 },
-      t8: { x: 102, y: 240, size: 9, align: 'center' },
-      e8: { x: 140, y: 240, size: 10 },
-      d8: { x: 335, y: 240, size: 10 },
       field_date2: { x: 110, y: 89, size: 10 }
     };
 
@@ -173,6 +149,8 @@
         <input type="text" id="e${entryCount}" placeholder="Entry title">
         <label>Description</label>
         <textarea id="d${entryCount}" placeholder="Description"></textarea>
+        <label>Image (Optional)</label>
+        <input type="file" id="img_${entryCount}" accept="image/png, image/jpeg">
       `;
       entriesDiv.appendChild(div);
     }
@@ -190,30 +168,57 @@
       document.getElementById('field_day').value = dayName;
     });
 
-    function wrapTextWidth(text, maxWidth, fontSize){
-  const approxCharWidth = fontSize * 0.55;
-  const maxChars = Math.floor(maxWidth / approxCharWidth);
-  
-  // Pisahkan teks jika ada \n (baris baru)
-  const paragraphs = text.split('\n');
-  let lines = [];
-  
-  for(const paragraph of paragraphs){
-    const words = paragraph.split(' ');
-    let currentLine = '';
-    for(const word of words){
-      if((currentLine + word).length > maxChars){
-        lines.push(currentLine.trim());
-        currentLine = word + ' ';
-      } else currentLine += word + ' ';
+    // === Helper Membaca Fail Gambar ===
+    function readFileAsArrayBuffer(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+      });
     }
-    lines.push(currentLine.trim());
-  }
-  return lines;
-}
 
-    function drawText(page, x, y, text, size=10, align='left', maxWidth=200){
-      const lines = wrapTextWidth(text, maxWidth, size);
+    // === Helper Embed Gambar ke PDF (Dua Format) ===
+    async function embedUploadedImage(pdfDoc, file) {
+      const buffer = await readFileAsArrayBuffer(file);
+      try {
+        if (file.type === 'image/png') {
+          return await pdfDoc.embedPng(buffer);
+        } else {
+          return await pdfDoc.embedJpg(buffer);
+        }
+      } catch (e) {
+        try {
+          return await pdfDoc.embedPng(buffer);
+        } catch (e2) {
+          return await pdfDoc.embedJpg(buffer);
+        }
+      }
+    }
+
+    // === Drawing text into PDF helpers ===
+    function wrapTextWidth(text, maxWidth, fontSize){
+      const approxCharWidth = fontSize * 0.55;
+      const maxChars = Math.floor(maxWidth / approxCharWidth);
+      
+      const paragraphs = text.split('\n');
+      let lines = [];
+      
+      for(const paragraph of paragraphs){
+        const words = paragraph.split(' ');
+        let currentLine = '';
+        for(const word of words){
+          if((currentLine + word).length > maxChars){
+            lines.push(currentLine.trim());
+            currentLine = word + ' ';
+          } else currentLine += word + ' ';
+        }
+        lines.push(currentLine.trim());
+      }
+      return lines;
+    }
+
+    function drawLines(page, x, y, lines, size=10, align='left'){
       let currentY = y;
       for(let i=0;i<lines.length;i++){
         const line = lines[i];
@@ -225,7 +230,6 @@
         page.drawText(line, { x: drawX, y: currentY, size });
         currentY -= (size + 2);
       }
-      return (lines.length - 1) * 10;
     }
 
     function getVal(id){ return document.getElementById(id)?.value || ''; }
@@ -239,13 +243,12 @@
       return `${h}:${m.toString().padStart(2,'0')} ${ampm}`; 
     }
 
-    // Fungsi gabung masa mula & masa tamat
     function formatTimeRange(startStr, endStr) {
       const startFormatted = formatTime(startStr);
       const endFormatted = formatTime(endStr);
 
       if (startFormatted && endFormatted) {
-        return `${startFormatted}\n- ${endFormatted}`;;
+        return `${startFormatted}\n- ${endFormatted}`;
       } else if (startFormatted) {
         return startFormatted;
       } else if (endFormatted) {
@@ -254,14 +257,29 @@
       return '';
     }
 
+    function drawHeaders(page, vals) {
+      if(vals.field_date) drawLines(page, FIELD_MAP.field_date.x, FIELD_MAP.field_date.y, [vals.field_date], FIELD_MAP.field_date.size);
+      if(vals.field_day) drawLines(page, FIELD_MAP.field_day.x, FIELD_MAP.field_day.y, [vals.field_day], FIELD_MAP.field_day.size);
+      if(vals.field_week) drawLines(page, FIELD_MAP.field_week.x, FIELD_MAP.field_week.y, [vals.field_week], FIELD_MAP.field_week.size);
+    }
+
     // === Download PDF ===
     document.getElementById('downloadBtn').addEventListener('click', async ()=>{
       try{
         const templateUrl = 'assets/documents/logbook_template.pdf';
         const resp = await fetch(templateUrl);
+
+        if (!resp.ok) {
+          throw new Error(`Fail template PDF tidak dijumpai di laluan: "${templateUrl}". Sila pastikan fail tersebut wujud.`);
+        }
+
         const bytes = await resp.arrayBuffer();
-        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-        const page = pdfDoc.getPages()[0];
+
+        // 1. Kekalkan 'templateDoc' yang sentiasa bersih
+        const templateDoc = await PDFLib.PDFDocument.load(bytes);
+        
+        // 2. Cipta dokumen baharu
+        const pdfDoc = await PDFLib.PDFDocument.create();
 
         const vals = {
           field_day: getVal('field_day'),
@@ -270,39 +288,93 @@
           field_date2: formatDate(getVal('field_date'))
         };
 
-        let yOffset = 0;
-        drawText(page, FIELD_MAP.field_date.x, FIELD_MAP.field_date.y, vals.field_date, FIELD_MAP.field_date.size);
-        drawText(page, FIELD_MAP.field_day.x, FIELD_MAP.field_day.y, vals.field_day, FIELD_MAP.field_day.size);
-        drawText(page, FIELD_MAP.field_week.x, FIELD_MAP.field_week.y, vals.field_week, FIELD_MAP.field_week.size);
-        drawText(page, FIELD_MAP.field_date2.x, FIELD_MAP.field_date2.y, vals.field_date2, FIELD_MAP.field_date2.size);
+        // Helper untuk tambah muka surat yang 100% BERSIH dari template
+        async function addCleanPage() {
+          const [cleanPage] = await pdfDoc.copyPages(templateDoc, [0]);
+          const newPage = pdfDoc.addPage(cleanPage);
+          drawHeaders(newPage, vals);
+          return newPage;
+        }
 
-        for(let i=1;i<=entryCount;i++){
-          const tPos = FIELD_MAP[`t${i}`];
-          const ePos = FIELD_MAP[`e${i}`];
-          const dPos = FIELD_MAP[`d${i}`];
+        // Cipta muka surat pertama
+        let currentPage = await addCleanPage();
+        let currentY = 700; 
+        const PAGE_BOTTOM_LIMIT = 200; 
 
+        for(let i=1; i<=entryCount; i++){
           const startTime = getVal(`t_start_${i}`);
           const endTime = getVal(`t_end_${i}`);
           const timeText = formatTimeRange(startTime, endTime);
 
           const entryText = getVal(`e${i}`);
           const descText = getVal(`d${i}`);
+          const imgInput = document.getElementById(`img_${i}`);
 
-          let usedEntry = 0, usedDesc = 0;
-          if(timeText && tPos) drawText(page, tPos.x, tPos.y - yOffset, timeText, tPos.size, tPos.align, 180);
-          if(entryText && ePos) usedEntry = drawText(page, ePos.x, ePos.y - yOffset, entryText, ePos.size, ePos.align, 160);
-          if(descText && dPos) usedDesc = drawText(page, dPos.x, dPos.y - yOffset, descText, dPos.size, dPos.align, 160);
+          const timeLines = timeText ? wrapTextWidth(timeText, 180, 9) : [];
+          const entryLines = entryText ? wrapTextWidth(entryText, 160, 10) : [];
+          const descLines = descText ? wrapTextWidth(descText, 160, 10) : [];
 
-          let maxUsed = Math.max(usedEntry, usedDesc);
-          if(maxUsed > 0) yOffset += maxUsed;
+          const timeH = timeLines.length * 11;
+          const entryH = entryLines.length * 12;
+          const descH = descLines.length * 12;
+
+          let embeddedImg = null;
+          let imgDims = null;
+          let imgH = 0;
+
+          if (imgInput && imgInput.files && imgInput.files[0]) {
+            try {
+              embeddedImg = await embedUploadedImage(pdfDoc, imgInput.files[0]);
+              imgDims = embeddedImg.scaleToFit(180, 100);
+              imgH = imgDims.height + 10;
+            } catch (err) {
+              console.error(`Error loading image for entry ${i}:`, err);
+            }
+          }
+
+          const entryTotalHeight = Math.max(timeH, entryH, descH + imgH, 45);
+
+          // === AUTO PAGE-BREAK ===
+          if (currentY - entryTotalHeight < PAGE_BOTTOM_LIMIT) {
+            currentPage = await addCleanPage(); // Cipta muka surat baharu dari template kosong
+            currentY = 700;
+          }
+
+          // Lukis teks
+          if(timeLines.length) drawLines(currentPage, 102, currentY, timeLines, 9, 'center');
+          if(entryLines.length) drawLines(currentPage, 140, currentY, entryLines, 10, 'left');
+          if(descLines.length) drawLines(currentPage, 335, currentY, descLines, 10, 'left');
+
+          // Lukis gambar
+          if (embeddedImg && imgDims) {
+            const imgY = currentY - descH - imgDims.height - 5;
+            currentPage.drawImage(embeddedImg, {
+              x: 335,
+              y: imgY,
+              width: imgDims.width,
+              height: imgDims.height,
+            });
+          }
+
+          currentY -= (entryTotalHeight + 15);
         }
 
-        // signature
+        // === LUKIS TANDATANGAN & TARIKH BUKTI PADA SEMUA MUKA SURAT ===
+        let sigImage = null;
         if (!signaturePad.isEmpty()) {
           const dataURL = signaturePad.toDataURL("image/png");
           const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
-          const sigImage = await pdfDoc.embedPng(sigImageBytes);
-          page.drawImage(sigImage, { x: 100, y: 100, width: 100, height: 70 });
+          sigImage = await pdfDoc.embedPng(sigImageBytes);
+        }
+
+        const allPages = pdfDoc.getPages();
+        for (const page of allPages) {
+          if (sigImage) {
+            page.drawImage(sigImage, { x: 100, y: 100, width: 100, height: 70 });
+          }
+          if (vals.field_date2) {
+            drawLines(page, FIELD_MAP.field_date2.x, FIELD_MAP.field_date2.y, [vals.field_date2], FIELD_MAP.field_date2.size);
+          }
         }
 
         const out = await pdfDoc.save();
