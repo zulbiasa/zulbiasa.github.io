@@ -190,21 +190,27 @@
       document.getElementById('field_day').value = dayName;
     });
 
-    // === Drawing text into PDF helpers ===
     function wrapTextWidth(text, maxWidth, fontSize){
-      const approxCharWidth = fontSize * 0.55;
-      const maxChars = Math.floor(maxWidth / approxCharWidth);
-      const words = text.split(' ');
-      let lines = [], currentLine = '';
-      for(const word of words){
-        if((currentLine + word).length > maxChars){
-          lines.push(currentLine.trim());
-          currentLine = word + ' ';
-        } else currentLine += word + ' ';
-      }
-      lines.push(currentLine.trim());
-      return lines;
+  const approxCharWidth = fontSize * 0.55;
+  const maxChars = Math.floor(maxWidth / approxCharWidth);
+  
+  // Pisahkan teks jika ada \n (baris baru)
+  const paragraphs = text.split('\n');
+  let lines = [];
+  
+  for(const paragraph of paragraphs){
+    const words = paragraph.split(' ');
+    let currentLine = '';
+    for(const word of words){
+      if((currentLine + word).length > maxChars){
+        lines.push(currentLine.trim());
+        currentLine = word + ' ';
+      } else currentLine += word + ' ';
     }
+    lines.push(currentLine.trim());
+  }
+  return lines;
+}
 
     function drawText(page, x, y, text, size=10, align='left', maxWidth=200){
       const lines = wrapTextWidth(text, maxWidth, size);
@@ -239,7 +245,7 @@
       const endFormatted = formatTime(endStr);
 
       if (startFormatted && endFormatted) {
-        return `${startFormatted} - ${endFormatted}`;
+        return `${startFormatted}\n- ${endFormatted}`;;
       } else if (startFormatted) {
         return startFormatted;
       } else if (endFormatted) {
