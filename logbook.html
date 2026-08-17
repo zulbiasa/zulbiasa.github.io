@@ -23,6 +23,24 @@
     button.secondary{background:#6b7280}
     button.ghost{background:transparent;color:#0b5fff;border:1px solid #0b5fff}
     .time-entry{border:1px solid #ddd;background:white;padding:10px;margin-top:10px;border-radius:8px}
+    
+    /* Layout Side-by-Side untuk Masa */
+    .time-range-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .time-range-group input[type="time"] {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+    }
+    .time-range-group span {
+      font-weight: bold;
+      color: #555;
+    }
+
     .controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
     footer{margin-top:20px;font-size:13px;color:#666;text-align:center}
     /* simple modal */
@@ -61,7 +79,7 @@
     </div>
 
     <div class="controls">
-      <button id="aiFillBtn" class="ghost">AI Fill (suggest entries)</button>
+      <!--<button id="aiFillBtn" class="ghost">AI Fill (suggest entries)</button>-->
       <button id="downloadBtn">Download filled PDF</button>
     </div>
 
@@ -108,28 +126,28 @@
       field_day: { x: 290, y: 760, size: 10 },
       field_week: { x: 490, y: 760, size: 10 },
       field_date: { x: 130, y: 760, size: 10 },
-      t1: { x: 102, y: 700, size: 10, align: 'center' },
+      t1: { x: 102, y: 700, size: 9, align: 'center' },
       e1: { x: 140, y: 700, size: 10 },
       d1: { x: 335, y: 700, size: 10 },
-      t2: { x: 102, y: 640, size: 10, align: 'center' },
+      t2: { x: 102, y: 640, size: 9, align: 'center' },
       e2: { x: 140, y: 640, size: 10 },
       d2: { x: 335, y: 640, size: 10 },
-      t3: { x: 102, y: 575, size: 10, align: 'center' },
+      t3: { x: 102, y: 575, size: 9, align: 'center' },
       e3: { x: 140, y: 575, size: 10 },
       d3: { x: 335, y: 575, size: 10 },
-      t4: { x: 102, y: 510, size: 10, align: 'center' },
+      t4: { x: 102, y: 510, size: 9, align: 'center' },
       e4: { x: 140, y: 510, size: 10 },
       d4: { x: 335, y: 510, size: 10 },
-      t5: { x: 102, y: 435, size: 10, align: 'center' },
+      t5: { x: 102, y: 435, size: 9, align: 'center' },
       e5: { x: 140, y: 435, size: 10 },
       d5: { x: 335, y: 435, size: 10 },
-      t6: { x: 102, y: 370, size: 10, align: 'center' },
+      t6: { x: 102, y: 370, size: 9, align: 'center' },
       e6: { x: 140, y: 370, size: 10 },
       d6: { x: 335, y: 370, size: 10 },
-      t7: { x: 102, y: 305, size: 10, align: 'center' },
+      t7: { x: 102, y: 305, size: 9, align: 'center' },
       e7: { x: 140, y: 305, size: 10 },
       d7: { x: 335, y: 305, size: 10 },
-      t8: { x: 102, y: 240, size: 10, align: 'center' },
+      t8: { x: 102, y: 240, size: 9, align: 'center' },
       e8: { x: 140, y: 240, size: 10 },
       d8: { x: 335, y: 240, size: 10 },
       field_date2: { x: 110, y: 89, size: 10 }
@@ -145,8 +163,12 @@
       div.className = 'time-entry';
       div.dataset.index = entryCount;
       div.innerHTML = `
-        <label>Time</label>
-        <input type="time" id="t${entryCount}" step="60">
+        <label>Time (Start - End [Optional])</label>
+        <div class="time-range-group">
+          <input type="time" id="t_start_${entryCount}" step="60">
+          <span>-</span>
+          <input type="time" id="t_end_${entryCount}" step="60">
+        </div>
         <label>Entry</label>
         <input type="text" id="e${entryCount}" placeholder="Entry title">
         <label>Description</label>
@@ -168,7 +190,7 @@
       document.getElementById('field_day').value = dayName;
     });
 
-    // === Drawing text into PDF helpers (kept from your original) ===
+    // === Drawing text into PDF helpers ===
     function wrapTextWidth(text, maxWidth, fontSize){
       const approxCharWidth = fontSize * 0.55;
       const maxChars = Math.floor(maxWidth / approxCharWidth);
@@ -202,7 +224,29 @@
 
     function getVal(id){ return document.getElementById(id)?.value || ''; }
     function formatDate(val){ if(!val) return ''; const d = new Date(val + 'T00:00:00'); return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear(); }
-    function formatTime(timeStr){ if(!timeStr) return ''; let [h,m] = timeStr.split(':').map(Number); const ampm = h>=12 ? 'PM':'AM'; h = h%12 || 12; return `${h}:${m.toString().padStart(2,'0')} ${ampm}`; }
+    
+    function formatTime(timeStr){ 
+      if(!timeStr) return ''; 
+      let [h,m] = timeStr.split(':').map(Number); 
+      const ampm = h>=12 ? 'PM':'AM'; 
+      h = h%12 || 12; 
+      return `${h}:${m.toString().padStart(2,'0')} ${ampm}`; 
+    }
+
+    // Fungsi gabung masa mula & masa tamat
+    function formatTimeRange(startStr, endStr) {
+      const startFormatted = formatTime(startStr);
+      const endFormatted = formatTime(endStr);
+
+      if (startFormatted && endFormatted) {
+        return `${startFormatted} - ${endFormatted}`;
+      } else if (startFormatted) {
+        return startFormatted;
+      } else if (endFormatted) {
+        return endFormatted;
+      }
+      return '';
+    }
 
     // === Download PDF ===
     document.getElementById('downloadBtn').addEventListener('click', async ()=>{
@@ -231,7 +275,10 @@
           const ePos = FIELD_MAP[`e${i}`];
           const dPos = FIELD_MAP[`d${i}`];
 
-          const timeText = formatTime(getVal(`t${i}`));
+          const startTime = getVal(`t_start_${i}`);
+          const endTime = getVal(`t_end_${i}`);
+          const timeText = formatTimeRange(startTime, endTime);
+
           const entryText = getVal(`e${i}`);
           const descText = getVal(`d${i}`);
 
@@ -282,7 +329,6 @@
 
     // function to populate UI entries from AI result
     function applyAIEntries(entries){
-      // clear existing entries and recreate to match number of entries
       entriesDiv.innerHTML = '';
       entryCount = 0;
       const max = Math.min(8, entries.length);
@@ -290,7 +336,15 @@
         createTimeEntry();
         const idx = i+1;
         const e = entries[i];
-        if(e.time) document.getElementById(`t${idx}`).value = e.time;
+        
+        if(e.start_time) document.getElementById(`t_start_${idx}`).value = e.start_time;
+        if(e.end_time) document.getElementById(`t_end_${idx}`).value = e.end_time;
+        if(e.time && !e.start_time) {
+          const times = e.time.split('-').map(t => t.trim());
+          if(times[0]) document.getElementById(`t_start_${idx}`).value = times[0];
+          if(times[1]) document.getElementById(`t_end_${idx}`).value = times[1];
+        }
+
         if(e.title) document.getElementById(`e${idx}`).value = e.title;
         if(e.description) document.getElementById(`d${idx}`).value = e.description;
       }
@@ -306,7 +360,6 @@
       aiStatus.textContent = 'Generating suggestions...';
 
       try{
-        // call serverless endpoint (you must deploy this)
         const resp = await fetch('/api/generate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -330,7 +383,6 @@
       }
     });
 
-    // optional: allow pressing ESC to close modal
     window.addEventListener('keydown', (e)=>{ if(e.key==='Escape') aiModal.style.display='none'; });
 
   </script>
