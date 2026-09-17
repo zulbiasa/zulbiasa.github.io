@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UTeM 22nd Graduation Countdown</title>
+    
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+            --apple-blue: #2997ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        nav {
+            width: 100%;
+            height: 44px;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #333;
+        }
+
+        nav span {
+            font-size: 12px;
+            color: #c8c8c8;
+            letter-spacing: 0.5px;
+        }
+
+        .hero {
+            margin-top: 12vh;
+            text-align: center;
+            padding: 0 20px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Styling Dropdown Apple-style */
+        .select-container {
+            margin-bottom: 25px;
+        }
+
+        select {
+            appearance: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 40px 10px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            border-radius: 980px;
+            cursor: pointer;
+            outline: none;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23f5f5f7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        select option {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        h1 {
+            font-size: 70px;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+            line-height: 1.05;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #fff, #86868b, #fff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .faculty-text {
+            font-size: 16px;
+            color: var(--apple-blue);
+            font-weight: 500;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.4;
+            min-height: 45px;
+        }
+
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 80px;
+        }
+
+        .number {
+            font-size: 64px;
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 8px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--text-main);
+            color: var(--bg-color);
+            padding: 12px 24px;
+            border-radius: 980px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .cta-button.outline {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-main);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.02);
+            background-color: #e8e8ed;
+        }
+        
+        .cta-button.outline:hover {
+            background-color: var(--text-main);
+            color: var(--bg-color);
+        }
+
+        .date-text {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #6e6e73;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 46px; }
+            .faculty-text { font-size: 14px; padding: 0 10px; }
+            .countdown-container { gap: 20px; }
+            .number { font-size: 42px; }
+            .time-unit { min-width: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <span>22nd UTeM Graduation Countdown</span>
+    </nav>
+
+    <main class="hero">
+        <div class="select-container">
+            <select id="sessionSelector" onchange="updateSession()">
+                <option value="1">Session 1 (31 Okt, 7.30 Morning)</option>
+                <option value="2">Session 2 (31 Okt, 1.00 Afternoon)</option>
+                <option value="3" selected>Session 3 (1 Nov, 7.30 Morning)</option>
+                <option value="4">Session 4 (1 Nov, 1.00 Afternoon)</option>
+                <option value="5">Session 5 (2 Nov, 7.30 Morning)</option>
+                <option value="6">Session 6 (2 Nov, 1.00 Afternoon)</option>
+            </select>
+        </div>
+
+        <h1 id="titleText">Session 3 🎓</h1>
+        <p class="faculty-text" id="facultyText">Graduan Sarjana Muda FAIX, FTMK & Diploma FTMK</p>
+
+        <div class="countdown-container" id="countdown">
+            <div class="time-unit">
+                <div class="number" id="days">00</div>
+                <div class="label">Days</div>
+            </div>
+            <div class="time-unit">
+                <div class="number" id="hours">00</div>
+                <div class="label">Hours</div>
+            </div>
+            <div class="time-unit">
+                <div class="number" id="minutes">00</div>
+                <div class="label">Mins</div>
+            </div>
+            <div class="time-unit">
+                <div class="number" id="seconds">00</div>
+                <div class="label">Secs</div>
+            </div>
+        </div>
+
+        <div class="calendar-actions">
+            <button class="cta-button" onclick="addToGoogleCalendar()">Google Calendar</button>
+            <button class="cta-button outline" onclick="addToAppleCalendar()">Apple Calendar</button>
+        </div>
+        
+        <p class="date-text" id="dateDisplay">November 1, 2026 • 7:30 AM • UTeM</p>
+    </main>
+
+    <script>
+        // Database Sesi Konvo UTeM
+        const sessionsData = {
+            "1": {
+                title: "Session 1 🎓",
+                faculty: "Graduan Pascasiswazah (Ijazah Kedoktoran & Sarjana) & Penerima Hadiah Akademik",
+                targetDate: "October 31, 2026 07:30:00",
+                displayDate: "October 31, 2026 • 7:30 AM • UTeM",
+                utcStart: "20261030T233000Z",
+                utcEnd: "20261031T040000Z" // Anggaran habis pukul 12 PM
+            },
+            "2": {
+                title: "Session 2 🎓",
+                faculty: "Graduan Sarjana Muda FTKE & Diploma FTKE",
+                targetDate: "October 31, 2026 13:00:00",
+                displayDate: "October 31, 2026 • 1:00 PM • UTeM",
+                utcStart: "20261031T050000Z",
+                utcEnd: "20261031T093000Z" // Anggaran habis pukul 5.30 PM
+            },
+            "3": {
+                title: "Session 3 🎓",
+                faculty: "Graduan Sarjana Muda FAIX, FTMK & Diploma FTMK",
+                targetDate: "November 1, 2026 07:30:00",
+                displayDate: "November 1, 2026 • 7:30 AM • UTeM",
+                utcStart: "20261031T233000Z",
+                utcEnd: "20261101T040000Z"
+            },
+            "4": {
+                title: "Session 4 🎓",
+                faculty: "Graduan Sarjana Muda FTKM & Diploma FTKM",
+                targetDate: "November 1, 2026 13:00:00",
+                displayDate: "November 1, 2026 • 1:00 PM • UTeM",
+                utcStart: "20261101T050000Z",
+                utcEnd: "20261101T093000Z"
+            },
+            "5": {
+                title: "Session 5 🎓",
+                faculty: "Graduan Sarjana Muda FPTT, FTKIP & Diploma FTKIP",
+                targetDate: "November 2, 2026 07:30:00",
+                displayDate: "November 2, 2026 • 7:30 AM • UTeM",
+                utcStart: "20261101T233000Z",
+                utcEnd: "20261102T040000Z"
+            },
+            "6": {
+                title: "Session 6 🎓",
+                faculty: "Graduan Sarjana Muda FTKEK & Diploma FTKEK",
+                targetDate: "November 2, 2026 13:00:00",
+                displayDate: "November 2, 2026 • 1:00 PM • UTeM",
+                utcStart: "20261102T050000Z",
+                utcEnd: "20261102T093000Z"
+            }
+        };
+
+        let currentInterval;
+        let activeSession = sessionsData["3"]; // Default ke Sesi 3
+
+        function updateSession() {
+            const selector = document.getElementById("sessionSelector");
+            activeSession = sessionsData[selector.value];
+
+            // Update Teks
+            document.getElementById("titleText").innerText = activeSession.title;
+            document.getElementById("facultyText").innerText = activeSession.faculty;
+            document.getElementById("dateDisplay").innerText = activeSession.displayDate;
+
+            // Reset & Start Timer Baru
+            startTimer();
+        }
+
+        function startTimer() {
+            if (currentInterval) clearInterval(currentInterval);
+            const targetTime = new Date(activeSession.targetDate).getTime();
+
+            // Run first time immediately
+            calculateTime(targetTime);
+            
+            currentInterval = setInterval(() => {
+                calculateTime(targetTime);
+            }, 1000);
+        }
+
+        function calculateTime(targetTime) {
+            const now = new Date().getTime();
+            const distance = targetTime - now;
+
+            if (distance < 0) {
+                document.getElementById("days").innerText = "00";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const formatTime = (time) => time < 10 ? `0${time}` : time;
+
+            document.getElementById("days").innerText = formatTime(days);
+            document.getElementById("hours").innerText = formatTime(hours);
+            document.getElementById("minutes").innerText = formatTime(minutes);
+            document.getElementById("seconds").innerText = formatTime(seconds);
+        }
+
+        function addToGoogleCalendar() {
+            const text = encodeURIComponent(`UTeM 22nd Convocation - ${activeSession.title.replace(" Pro.", "")}`);
+            const details = encodeURIComponent(`Majlis Konvokesyen Ke-22 UTeM. Tahniah graduan ${activeSession.faculty}!`);
+            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${activeSession.utcStart}/${activeSession.utcEnd}&details=${details}&location=Universiti+Teknikal+Malaysia+Melaka+(UTeM)`;
+            window.open(url, '_blank');
+        }
+
+        function addToAppleCalendar() {
+            const icsContent = 
+`BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${activeSession.utcStart}
+DTEND:${activeSession.utcEnd}
+SUMMARY:UTeM 22nd Convocation
+DESCRIPTION:Majlis Konvokesyen Ke-22 UTeM. Tahniah graduan ${activeSession.faculty}!
+LOCATION:Universiti Teknikal Malaysia Melaka (UTeM)
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'utem_convo_session.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialize pertama kali load page
+        startTimer();
+    </script>
+</body>
+</html>
