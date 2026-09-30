@@ -76,11 +76,20 @@
 
     <div style="margin-top:10px;">
       <button id="clearSig" class="secondary">Clear Signature</button>
+      <!-- Pilihan susunan teks baharu -->
+       <label for="descAlignment" style="margin-right: 8px;"> Format Alignment:</label>
+      <select id="descAlignment" style="width: auto; padding: 7px; margin-right: 8px;">
+        <option value="justify">Justify</option>
+        <option value="left">Left</option>
+      </select>
     </div>
 
-    <div class="controls">
+    <div class="controls" style="align-items: center;">
       <!--<button id="aiFillBtn" class="ghost">AI Fill (suggest entries)</button>-->
+
+
       <button id="downloadBtn">Download filled PDF</button>
+      
     </div>
 
     <footer>© 2025 Zulhelmi Afendi All right reserved</footer>
@@ -197,40 +206,92 @@
     }
 
     // === Drawing text into PDF helpers ===
-    function wrapTextWidth(text, maxWidth, fontSize){
-      const approxCharWidth = fontSize * 0.55;
-      const maxChars = Math.floor(maxWidth / approxCharWidth);
-      
-      const paragraphs = text.split('\n');
-      let lines = [];
-      
-      for(const paragraph of paragraphs){
-        const words = paragraph.split(' ');
-        let currentLine = '';
-        for(const word of words){
-          if((currentLine + word).length > maxChars){
-            lines.push(currentLine.trim());
-            currentLine = word + ' ';
-          } else currentLine += word + ' ';
-        }
-        lines.push(currentLine.trim());
-      }
-      return lines;
+    function wrapTextPrecise(text, maxWidth, fontSize, font){
+  const paragraphs = text.split('\n');
+  let allLines = [];
+  
+  for(const paragraph of paragraphs){
+    // Mendeteksi jika kalimat diawali dengan bullet point (- atau * atau •)
+    const isBullet = /^[-*•]\s+/.test(paragraph);
+    let bulletIndent = 0;
+    
+    if (isBullet) {
+        const bulletPrefix = paragraph.match(/^[-*•]\s+/)[0];
+        bulletIndent = font.widthOfTextAtSize(bulletPrefix, fontSize);
     }
 
-    function drawLines(page, x, y, lines, size=10, align='left'){
-      let currentY = y;
-      for(let i=0;i<lines.length;i++){
-        const line = lines[i];
-        let drawX = x;
-        if(align==='center'){
-          const textWidth = line.length * size * 0.55;
-          drawX = x - textWidth/2;
-        }
-        page.drawText(line, { x: drawX, y: currentY, size });
-        currentY -= (size + 2);
+    const words = paragraph.split(' ');
+    let currentLine = '';
+    let isFirstLineOfParagraph = true;
+    
+    for(let i = 0; i < words.length; i++){
+      const word = words[i];
+      const testLine = currentLine.length > 0 ? currentLine + ' ' + word : word;
+      
+      // Kurangi jatah ruang maksimal untuk baris lanjutan (agar teks sejajar akibat lekukan/indent)
+      const currentMaxWidth = (isBullet && !isFirstLineOfParagraph) ? maxWidth - bulletIndent : maxWidth;
+      
+      if(font.widthOfTextAtSize(testLine, fontSize) > currentMaxWidth && currentLine.length > 0){
+        allLines.push({ 
+          text: currentLine, 
+          indent: isFirstLineOfParagraph ? 0 : (isBullet ? bulletIndent : 0),
+          isLastLine: false 
+        });
+        currentLine = word;
+        isFirstLineOfParagraph = false;
+      } else {
+        currentLine = testLine;
       }
     }
+    
+    if(currentLine) {
+      allLines.push({ 
+        text: currentLine, 
+        indent: isFirstLineOfParagraph ? 0 : (isBullet ? bulletIndent : 0),
+        isLastLine: true 
+      });
+    }
+  }
+  return allLines;
+}
+
+    function drawLines(page, x, y, lines, size=10, align='left', font=null, maxWidth=160){
+  let currentY = y;
+  const lineHeight = size + 4; 
+  
+  for(let i = 0; i < lines.length; i++){
+    // Mendukung objek garis dari wrapTextPrecise atau string biasa
+    const lineObj = typeof lines[i] === 'string' ? { text: lines[i], indent: 0, isLastLine: true } : lines[i];
+    const textToDraw = lineObj.text;
+    let drawX = x + (lineObj.indent || 0);
+    
+    if (align === 'center' && font) {
+      const textWidth = font.widthOfTextAtSize(textToDraw, size);
+      drawX = x + (maxWidth - textWidth) / 2;
+    } 
+    // Logika baharu untuk JUSTIFY (Rata Kiri-Kanan)
+    else if (align === 'justify' && font && !lineObj.isLastLine) {
+      const words = textToDraw.split(' ');
+      if (words.length > 1) {
+          const effectiveMaxWidth = maxWidth - (lineObj.indent || 0);
+          const totalWordsWidth = words.reduce((sum, w) => sum + font.widthOfTextAtSize(w, size), 0);
+          const spaceWidth = (effectiveMaxWidth - totalWordsWidth) / (words.length - 1);
+          
+          let wordX = drawX;
+          for (const word of words) {
+              page.drawText(word, { x: wordX, y: currentY, size, font });
+              wordX += font.widthOfTextAtSize(word, size) + spaceWidth;
+          }
+          currentY -= lineHeight;
+          continue; // Lompat/selesai menggambar baris ini, lanjut ke baris berikutnya
+      }
+    }
+    
+    // Lukisan standard (Kiri, Tengah, atau baris terakhir paragraf yang tidak boleh di-justify)
+    page.drawText(textToDraw, { x: drawX, y: currentY, size, font: font || undefined });
+    currentY -= lineHeight;
+  }
+}
 
     function getVal(id){ return document.getElementById(id)?.value || ''; }
     function formatDate(val){ if(!val) return ''; const d = new Date(val + 'T00:00:00'); return d.getDate().toString().padStart(2,'0')+'/'+(d.getMonth()+1).toString().padStart(2,'0')+'/'+d.getFullYear(); }
@@ -268,6 +329,7 @@
       try{
         const templateUrl = 'assets/documents/logbook_template.pdf';
         const resp = await fetch(templateUrl);
+        const alignSetting = document.getElementById('descAlignment').value;
 
         if (!resp.ok) {
           throw new Error(`Fail template PDF tidak dijumpai di laluan: "${templateUrl}". Sila pastikan fail tersebut wujud.`);
@@ -280,6 +342,8 @@
         
         // 2. Cipta dokumen baharu
         const pdfDoc = await PDFLib.PDFDocument.create();
+
+        const helveticaFont = await pdfDoc.embedStandardFont(PDFLib.StandardFonts.Helvetica);
 
         const vals = {
           field_day: getVal('field_day'),
@@ -310,13 +374,13 @@
           const descText = getVal(`d${i}`);
           const imgInput = document.getElementById(`img_${i}`);
 
-          const timeLines = timeText ? wrapTextWidth(timeText, 180, 9) : [];
-          const entryLines = entryText ? wrapTextWidth(entryText, 160, 10) : [];
-          const descLines = descText ? wrapTextWidth(descText, 160, 10) : [];
+          const timeLines = timeText ? wrapTextPrecise(timeText, 180, 9, helveticaFont) : [];
+          const entryLines = entryText ? wrapTextPrecise(entryText, 160, 10, helveticaFont) : [];
+          const descLines = descText ? wrapTextPrecise(descText, 160, 10, helveticaFont) : [];
 
-          const timeH = timeLines.length * 11;
-          const entryH = entryLines.length * 12;
-          const descH = descLines.length * 12;
+          const timeH = timeLines.length * 13; // 9 + 4
+          const entryH = entryLines.length * 14; // 10 + 4
+          const descH = descLines.length * 14; // 10 + 4
 
           let embeddedImg = null;
           let imgDims = null;
@@ -340,10 +404,13 @@
             currentY = 700;
           }
 
-          // Lukis teks
-          if(timeLines.length) drawLines(currentPage, 102, currentY, timeLines, 9, 'center');
-          if(entryLines.length) drawLines(currentPage, 140, currentY, entryLines, 10, 'left');
-          if(descLines.length) drawLines(currentPage, 335, currentY, descLines, 10, 'left');
+          // Lukis teks - tambah parameter font di hujung untuk susunan tengah (center)
+          // Memanggil teks dengan tambahan nilai lebar kotak (contohnya 70 untuk waktu, 160 untuk Entry dan Deskripsi)
+if(timeLines.length) drawLines(currentPage, 102, currentY, timeLines, 9, 'center', helveticaFont, 70);
+if(entryLines.length) drawLines(currentPage, 140, currentY, entryLines, 10, alignSetting, helveticaFont, 177);
+
+// Gunakan 'justify' khusus untuk bahagian penerangan (Description / Remarks)
+if(descLines.length) drawLines(currentPage, 335, currentY, descLines, 10, alignSetting, helveticaFont, 177);
 
           // Lukis gambar
           if (embeddedImg && imgDims) {
