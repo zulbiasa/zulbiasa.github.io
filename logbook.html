@@ -23,6 +23,117 @@
       color: #111
     }
 
+    body.dark-mode {
+      color-scheme: dark;
+      background: #1f2937;
+      color: #f3f4f6;
+    }
+
+    #signature-pad {
+      border: 1px solid #ccc;
+      background: white;
+    }
+
+    body.dark-mode #signature-pad {
+      border-color: #6b7280;
+      background: #9ca3af;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .theme-toggle {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border: 1px solid #9ca3af;
+      border-radius: 20px;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .theme-toggle::before {
+      content: "";
+      width: 30px;
+      height: 16px;
+      border-radius: 999px;
+      background: #9ca3af;
+      box-shadow: inset 0 0 0 2px #9ca3af;
+      transition: background-color 0.2s ease;
+    }
+
+    .theme-toggle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: white;
+      transform: translateY(-50%);
+      transition: transform 0.2s ease;
+    }
+
+    .theme-toggle[aria-checked="true"]::before {
+      background: #0b5fff;
+      box-shadow: inset 0 0 0 2px #0b5fff;
+    }
+
+    .theme-toggle[aria-checked="true"]::after {
+      transform: translate(14px, -50%);
+    }
+
+    .theme-toggle:focus-visible {
+      outline: 3px solid #60a5fa;
+      outline-offset: 2px;
+    }
+
+    body.dark-mode input,
+    body.dark-mode textarea,
+    body.dark-mode select {
+      border-color: #6b7280;
+      background: #374151;
+      color: #f3f4f6;
+    }
+
+    body.dark-mode .time-entry,
+    body.dark-mode .day-tabs button,
+    body.dark-mode .modal .card {
+      border-color: #4b5563;
+      background: #374151;
+      color: #f3f4f6;
+    }
+
+    body.dark-mode .day-tabs button[aria-selected="true"] {
+      background: #0b5fff;
+      color: white;
+    }
+
+    body.dark-mode .time-range-group span,
+    body.dark-mode footer,
+    body.dark-mode .small {
+      color: #d1d5db;
+    }
+
+    @media (max-width: 480px) {
+      .page-header {
+        align-items: flex-start;
+      }
+
+      .page-header h1 {
+        max-width: 190px;
+      }
+    }
+
     .wrap {
       max-width: 800px;
       margin: 20px auto;
@@ -169,7 +280,10 @@
 
 <body>
   <div class="wrap">
-    <h1>Daily Training Log Generator</h1>
+    <div class="page-header">
+      <h1>Daily Training Log Generator</h1>
+      <button id="themeToggle" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode">Dark mode</button>
+    </div>
 
     <label for="logMode">Logbook period</label>
     <select id="logMode" style="width:auto">
@@ -190,7 +304,7 @@
 
     <h3>Signature</h3>
     <canvas id="signature-pad" width="250" height="150"
-      style="border:1px solid #ccc; width:250px; height:150px; background:white; border-radius:8px;">
+      style="width:250px; height:150px; border-radius:8px;">
     </canvas>
 
     <div style="margin-top:10px;">
@@ -734,6 +848,20 @@
 
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape') aiModal.style.display = 'none'; });
 
+  </script>
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+
+    function setDarkMode(enabled) {
+      document.body.classList.toggle('dark-mode', enabled);
+      themeToggle.setAttribute('aria-checked', String(enabled));
+      localStorage.setItem('darkMode', String(enabled));
+    }
+
+    setDarkMode(localStorage.getItem('darkMode') === 'true');
+    themeToggle.addEventListener('click', () => {
+      setDarkMode(themeToggle.getAttribute('aria-checked') !== 'true');
+    });
   </script>
 </body>
 
