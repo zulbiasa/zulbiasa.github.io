@@ -275,54 +275,13 @@
       color: #666;
       margin-top: 6px
     }
-
-    /* Modern responsive layer */
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
-    :root { --ink:#17221f; --muted:#687672; --line:#d8e0dc; --paper:#fff; --canvas:#eef3f0; --accent:#16796a; --accent-dark:#0c5e52; --soft:#dff1eb; }
-    * { box-sizing:border-box; }
-    body { background:var(--canvas); color:var(--ink); font-family:'DM Sans',sans-serif; line-height:1.5; }
-    body.dark-mode { --ink:#edf6f1; --muted:#a8bbb4; --line:#334a43; --paper:#1d2d29; --canvas:#13201d; --accent:#55c8ae; --accent-dark:#8de1cc; --soft:#24473e; background:var(--canvas); }
-    .wrap { max-width:960px; margin:0 auto; padding:32px 22px 22px; }
-    .page-header { margin-bottom:25px; }
-    .page-header h1 { margin:0; font-family:'Space Grotesk',sans-serif; font-size:clamp(28px,5vw,42px); letter-spacing:-.03em; line-height:1.05; }
-    .theme-toggle { min-height:42px; border-color:var(--line); background:var(--paper); color:var(--ink); font:inherit; }
-    .theme-toggle::before { background:var(--line); box-shadow:inset 0 0 0 2px var(--line); }
-    .theme-toggle::after { background:var(--paper); }
-    .theme-toggle[aria-checked="true"]::before { background:var(--accent); box-shadow:inset 0 0 0 2px var(--accent); }
-    body.dark-mode .theme-toggle { border-color:#55756b; background:#203831; color:#f1faf6; }
-    body.dark-mode .theme-toggle::after { background:#f1faf6; }
-    label { margin:16px 0 7px; color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.03em; }
-    input,textarea,select { width:100%; min-height:44px; padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:var(--paper); color:var(--ink); font:inherit; font-size:14px; }
-    textarea { min-height:84px; resize:vertical; }
-    input:focus,textarea:focus,select:focus,button:focus-visible { outline:3px solid rgba(22,121,106,.22); outline-offset:2px; }
-    #logMode,#dayCount { display:inline-block; width:auto !important; min-width:145px; margin-right:8px; }
-    #field_week { max-width:330px; }
-    .day-tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin:24px 0 20px; }
-    .day-tabs button { min-height:42px; border-color:var(--line); border-radius:9px; background:var(--paper); color:var(--muted); font:inherit; font-size:13px; font-weight:700; }
-    .day-tabs button[aria-selected="true"] { border-color:var(--accent); background:var(--soft); color:var(--accent-dark); }
-    .day-panel { padding:20px; border:1px solid var(--line); border-radius:16px; background:var(--paper); box-shadow:0 18px 50px rgba(32,67,58,.07); }
-    .day-panel h3 { margin:0 0 18px; font-family:'Space Grotesk',sans-serif; font-size:20px; letter-spacing:-.03em; }
-    .time-entry { margin-top:12px; padding:16px; border:1px solid var(--line); border-radius:12px; background:color-mix(in srgb,var(--paper) 88%,var(--canvas)); }
-    .time-range-group { gap:8px; }
-    .time-range-group input[type="time"] { min-width:0; }
-    button { min-height:44px; padding:10px 15px; border-radius:9px; background:var(--accent); font:inherit; font-size:14px; font-weight:700; }
-    button:hover { background:var(--accent-dark); }
-    button.secondary { border:1px solid var(--line); background:transparent; color:var(--ink); }
-    #signature-pad { display:block; width:250px; height:150px; border:1px dashed var(--accent); background:#fbfdfc; }
-    body.dark-mode #signature-pad { background:#e7f0eb; }
-    .controls { justify-content:flex-end; margin-top:16px; }
-    #downloadBtn { padding:12px 20px; }
-    footer { margin-top:25px; color:var(--muted); font-size:12px; }
-    .modal .card { border-color:var(--line); background:var(--paper); }
-    @media (max-width:600px) { .wrap { padding:24px 14px 18px; } .page-header { flex-direction:column; align-items:flex-start; } .day-tabs { grid-template-columns:repeat(3,1fr); } .day-panel { padding:17px; } .controls { justify-content:stretch; } #downloadBtn { width:100%; } #signature-pad { width:100%; height:auto; aspect-ratio:5 / 3; } }
-    @media (max-width:380px) { .day-tabs { gap:6px; } .day-tabs button { padding:7px 4px; font-size:12px; } .time-range-group { gap:5px; } }
   </style>
 </head>
 
 <body>
   <div class="wrap">
     <div class="page-header">
-      <h1>Daily LogBook Generator</h1>
+      <h1>Daily Training Log Generator</h1>
       <button id="themeToggle" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="Dark mode">Dark mode</button>
     </div>
 
@@ -391,18 +350,25 @@
   <script>
     // === Signature Pad Setup ===
     const canvas = document.getElementById("signature-pad");
+    const signaturePad = new SignaturePad(canvas);
 
     function resizeCanvas() {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      canvas.width = 250 * ratio;
-      canvas.height = 150 * ratio;
-      canvas.style.width = '250px';
-      canvas.style.height = '150px';
+      const savedSignature = signaturePad.isEmpty() ? null : signaturePad.toDataURL();
+      const cssWidth = Math.min(250, canvas.parentElement?.clientWidth || 250);
+      const cssHeight = Math.round(cssWidth * 0.6);
+
+      canvas.width = cssWidth * ratio;
+      canvas.height = cssHeight * ratio;
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
       canvas.getContext("2d").scale(ratio, ratio);
+
+      signaturePad.clear();
+      if (savedSignature) signaturePad.fromDataURL(savedSignature);
     }
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    const signaturePad = new SignaturePad(canvas);
     document.getElementById("clearSig").addEventListener("click", () => signaturePad.clear());
 
     // === Field map & entry UI ===
