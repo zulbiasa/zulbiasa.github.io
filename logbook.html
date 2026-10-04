@@ -161,8 +161,17 @@
       border-radius: 4px
     }
 
-    textarea {
-      min-height: 40px
+    textarea.auto-grow {
+      min-height: 40px;
+      box-sizing: border-box;
+      overflow: hidden;
+      resize: none;
+    }
+
+    .time-entry textarea.auto-grow,
+    .time-entry input[type="file"] {
+      width: 100%;
+      box-sizing: border-box;
     }
 
     button {
@@ -217,6 +226,10 @@
 
     .day-panel.active {
       display: block;
+    }
+
+    .add-time-entry {
+      margin-top: 12px;
     }
 
     /* Layout Side-by-Side untuk Masa */
@@ -309,6 +322,8 @@
 
     <div style="margin-top:10px;">
       <button id="clearSig" class="secondary">Clear Signature</button>
+      <label for="signatureFile">Import signature image</label>
+      <input type="file" id="signatureFile" accept="image/png,image/jpeg,image/webp" style="width:auto; padding:0px; margin-top:15px; margin-bottom:15px; border: none; background: none;">
       <!-- Pilihan susunan teks baharu -->
       <label for="descAlignment" style="margin-right: 8px;"> Format Alignment:</label>
       <select id="descAlignment" style="width: auto; padding: 7px; margin-right: 8px;">
@@ -351,10 +366,12 @@
     // === Signature Pad Setup ===
     const canvas = document.getElementById("signature-pad");
     const signaturePad = new SignaturePad(canvas);
+    let hasSignature = false;
+    signaturePad.onBegin = () => { hasSignature = true; };
 
     function resizeCanvas() {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      const savedSignature = signaturePad.isEmpty() ? null : signaturePad.toDataURL();
+      const savedSignature = hasSignature ? canvas.toDataURL() : null;
       const cssWidth = Math.min(250, canvas.parentElement?.clientWidth || 250);
       const cssHeight = Math.round(cssWidth * 0.6);
 
@@ -369,7 +386,103 @@
     }
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    document.getElementById("clearSig").addEventListener("click", () => signaturePad.clear());
+    document.getElementById("clearSig").addEventListener("click", () => {
+      signaturePad.clear();
+      hasSignature = false;
+      document.getElementById("signatureFile").value = "";
+    });
+
+    document.getElementById("signatureFile").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const image = new Image();
+        image.onload = async () => {
+          try {
+            const sourceCanvas = document.createElement("canvas");
+            sourceCanvas.width = image.naturalWidth;
+            sourceCanvas.height = image.naturalHeight;
+            const sourceContext = sourceCanvas.getContext("2d", { willReadFrequently: true });
+            sourceContext.drawImage(image, 0, 0);
+
+            const imageData = sourceContext.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+            let minX = sourceCanvas.width;
+            let minY = sourceCanvas.height;
+            let maxX = -1;
+            let maxY = -1;
+
+            for (let y = 0; y < sourceCanvas.height; y++) {
+              for (let x = 0; x < sourceCanvas.width; x++) {
+                const pixelIndex = (y * sourceCanvas.width + x) * 4;
+                const luminance = imageData.data[pixelIndex] * 0.299
+                  + imageData.data[pixelIndex + 1] * 0.587
+                  + imageData.data[pixelIndex + 2] * 0.114;
+                const inkOpacity = Math.max(0, Math.min(1, (245 - luminance) / 205));
+                const alpha = Math.round(imageData.data[pixelIndex + 3] * inkOpacity);
+                imageData.data[pixelIndex] = 0;
+                imageData.data[pixelIndex + 1] = 0;
+                imageData.data[pixelIndex + 2] = 0;
+                imageData.data[pixelIndex + 3] = alpha;
+
+                if (alpha > 24) {
+                  minX = Math.min(minX, x);
+                  minY = Math.min(minY, y);
+                  maxX = Math.max(maxX, x);
+                  maxY = Math.max(maxY, y);
+                }
+              }
+            }
+
+            if (maxX < 0) {
+              alert("No signature found. Choose an image with a visible signature.");
+              return;
+            }
+
+            sourceContext.putImageData(imageData, 0, 0);
+            const padding = Math.max(4, Math.round(Math.min(sourceCanvas.width, sourceCanvas.height) * 0.02));
+            const cropX = Math.max(0, minX - padding);
+            const cropY = Math.max(0, minY - padding);
+            const cropWidth = Math.min(sourceCanvas.width, maxX + padding + 1) - cropX;
+            const cropHeight = Math.min(sourceCanvas.height, maxY + padding + 1) - cropY;
+            const signatureCanvas = document.createElement("canvas");
+            signatureCanvas.width = cropWidth;
+            signatureCanvas.height = cropHeight;
+            signatureCanvas.getContext("2d").drawImage(
+              sourceCanvas,
+              cropX,
+              cropY,
+              cropWidth,
+              cropHeight,
+              0,
+              0,
+              cropWidth,
+              cropHeight
+            );
+
+            const maxWidth = canvas.clientWidth - 20;
+            const maxHeight = canvas.clientHeight - 20;
+            const scale = Math.min(maxWidth / cropWidth, maxHeight / cropHeight);
+            const width = cropWidth * scale;
+            const height = cropHeight * scale;
+            await signaturePad.fromDataURL(signatureCanvas.toDataURL("image/png"), {
+              x: (canvas.clientWidth - width) / 2,
+              y: (canvas.clientHeight - height) / 2,
+              width,
+              height
+            });
+            hasSignature = true;
+          } catch (error) {
+            alert("Could not load the signature image.");
+          }
+        };
+        image.onerror = () => alert("Could not load the signature image.");
+        image.src = reader.result;
+      };
+      reader.onerror = () => alert("Could not read the signature file.");
+      reader.readAsDataURL(file);
+    });
 
     // === Field map & entry UI ===
     const FIELD_MAP = {
@@ -401,14 +514,24 @@
           <input type="time" id="day_${dayIndex}_t_end_${entryIndex}" step="60">
         </div>
         <label>Entry</label>
-        <input type="text" id="day_${dayIndex}_e${entryIndex}" placeholder="Entry title">
+        <textarea class="auto-grow" rows="1" id="day_${dayIndex}_e${entryIndex}" placeholder="Entry title"></textarea>
         <label>Description</label>
-        <textarea id="day_${dayIndex}_d${entryIndex}" placeholder="Description"></textarea>
+        <textarea class="auto-grow" rows="1" id="day_${dayIndex}_d${entryIndex}" placeholder="Description"></textarea>
         <label>Image (Optional)</label>
         <input type="file" id="day_${dayIndex}_img_${entryIndex}" accept="image/png, image/jpeg">
       `;
       day.entriesDiv.appendChild(div);
     }
+
+    function resizeTextArea(field) {
+      field.style.height = 'auto';
+      field.style.height = `${field.scrollHeight}px`;
+    }
+
+    dayForms.addEventListener('input', event => {
+      if (!event.target.matches('textarea.auto-grow')) return;
+      resizeTextArea(event.target);
+    });
 
     function setDayName(dayIndex) {
       const dateVal = document.getElementById(`day_date_${dayIndex}`).value;
@@ -458,7 +581,7 @@
         <label for="day_name_${dayIndex}">Day</label>
         <input type="text" id="day_name_${dayIndex}" readonly>
         <div id="day_entries_${dayIndex}"></div>
-        <button type="button" id="add_entry_${dayIndex}">+ Add Time Entry</button>
+        <button type="button" class="add-time-entry" id="add_entry_${dayIndex}">+ Add Time Entry</button>
       `;
       dayForms.appendChild(panel);
 
@@ -469,7 +592,7 @@
         if (day.entryCount < 8) createTimeEntry(dayIndex);
         else alert('Maximum 8 entries allowed per day');
       });
-      panel.querySelector(`#day_date_${dayIndex}`).addEventListener('change', () => {
+      const updateDayFromDate = () => {
         setDayName(dayIndex);
         if (dayIndex === 0) {
           for (let nextDay = 1; nextDay < 6; nextDay++) {
@@ -477,7 +600,9 @@
             setDayName(nextDay);
           }
         }
-      });
+      };
+      panel.querySelector(`#day_date_${dayIndex}`).addEventListener('input', updateDayFromDate);
+      panel.querySelector(`#day_date_${dayIndex}`).addEventListener('change', updateDayFromDate);
     }
 
     function updateDayMode() {
@@ -750,7 +875,7 @@
         }
 
         let sigImage = null;
-        if (!signaturePad.isEmpty()) {
+        if (hasSignature) {
           const dataURL = signaturePad.toDataURL("image/png");
           const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
           sigImage = await pdfDoc.embedPng(sigImageBytes);
