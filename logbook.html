@@ -174,6 +174,84 @@
       box-sizing: border-box;
     }
 
+    .image-previews {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .image-preview {
+      display: grid;
+      grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+    }
+
+    .image-preview img {
+      display: block;
+      width: 100%;
+      height: 110px;
+      object-fit: contain;
+      background: #f3f4f6;
+      border-radius: 4px;
+    }
+
+    .image-preview-details {
+      min-width: 0;
+    }
+
+    .image-preview-name {
+      overflow-wrap: anywhere;
+      margin-bottom: 8px;
+    }
+
+    .image-preview-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .image-preview-controls button {
+      padding: 6px 8px;
+      font-size: 13px;
+    }
+
+    .image-preview-controls button[data-image-action="remove"] {
+      background: #dc2626;
+    }
+
+    .image-preview-controls button[data-image-action="remove"]:hover {
+      background: #b91c1c;
+    }
+
+    .image-preview-controls button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    body.dark-mode .image-preview {
+      border-color: #4b5563;
+      background: #374151;
+    }
+
+    body.dark-mode .image-preview img {
+      background: #1f2937;
+    }
+
+    @media (max-width: 480px) {
+      .image-preview {
+        grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
+      }
+
+      .image-preview img {
+        height: 90px;
+      }
+    }
+
     button {
       background: #0b5fff;
       color: white;
@@ -367,7 +445,9 @@
     const canvas = document.getElementById("signature-pad");
     const signaturePad = new SignaturePad(canvas);
     let hasSignature = false;
-    signaturePad.onBegin = () => { hasSignature = true; };
+    signaturePad.addEventListener("endStroke", () => {
+      hasSignature = !signaturePad.isEmpty();
+    });
 
     function resizeCanvas() {
       const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -491,13 +571,13 @@
       field_date: { x: 130, y: 760, size: 10 },
       field_date2: { x: 110, y: 89, size: 10 }
     };
-
     const dayCountSelect = document.getElementById('dayCount');
     const logModeSelect = document.getElementById('logMode');
     const dayCountLabel = document.getElementById('dayCountLabel');
     const dayTabs = document.getElementById('dayTabs');
     const dayForms = document.getElementById('dayForms');
     const dayStates = [];
+    const entryImages = new Map();
     let activeDayIndex = 0;
 
     function createTimeEntry(dayIndex) {
@@ -517,10 +597,56 @@
         <textarea class="auto-grow" rows="1" id="day_${dayIndex}_e${entryIndex}" placeholder="Entry title"></textarea>
         <label>Description</label>
         <textarea class="auto-grow" rows="1" id="day_${dayIndex}_d${entryIndex}" placeholder="Description"></textarea>
-        <label>Image (Optional)</label>
-        <input type="file" id="day_${dayIndex}_img_${entryIndex}" accept="image/png, image/jpeg">
+        <label for="day_${dayIndex}_img_${entryIndex}">Images (Optional)</label>
+        <input type="file" id="day_${dayIndex}_img_${entryIndex}" accept="image/png, image/jpeg" multiple>
+        <div class="small">Select PNG or JPEG images. Preview each image below, then reorder or remove it. Images appear in this order in the PDF.</div>
+        <div class="image-previews" id="day_${dayIndex}_image_previews_${entryIndex}" aria-live="polite"></div>
       `;
       day.entriesDiv.appendChild(div);
+    }
+
+    function renderImagePreviews(input, images) {
+      const previewList = document.getElementById(`${input.id.replace('_img_', '_image_previews_')}`);
+      if (!previewList) return;
+      previewList.replaceChildren();
+
+      images.forEach(({ file, url }, index) => {
+        const preview = document.createElement('div');
+        preview.className = 'image-preview';
+
+        const image = document.createElement('img');
+        image.src = url;
+        image.alt = `Preview ${index + 1}: ${file.name}`;
+
+        const details = document.createElement('div');
+        details.className = 'image-preview-details';
+
+        const name = document.createElement('div');
+        name.className = 'image-preview-name';
+        name.textContent = `${index + 1}. ${file.name}`;
+
+        const controls = document.createElement('div');
+        controls.className = 'image-preview-controls';
+        const addControl = (action, text, label, disabled = false, secondary = false) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.dataset.imageAction = action;
+          button.dataset.imageIndex = String(index);
+          button.setAttribute('aria-label', label);
+          button.textContent = text;
+          button.disabled = disabled;
+          if (secondary) button.className = 'secondary';
+          controls.appendChild(button);
+        };
+
+        addControl('up', 'Move up', `Move ${file.name} up`, index === 0, true);
+        addControl('down', 'Move down', `Move ${file.name} down`, index === images.length - 1, true);
+        addControl('remove', 'Remove', `Remove ${file.name}`, false, true);
+
+        details.append(name, controls);
+        preview.append(image, details);
+        previewList.appendChild(preview);
+      });
     }
 
     function resizeTextArea(field) {
@@ -531,6 +657,43 @@
     dayForms.addEventListener('input', event => {
       if (!event.target.matches('textarea.auto-grow')) return;
       resizeTextArea(event.target);
+    });
+
+    dayForms.addEventListener('change', event => {
+      const input = event.target;
+      if (!input.matches('input[type="file"][id*="_img_"]')) return;
+
+      const images = entryImages.get(input.id) || [];
+      for (const file of Array.from(input.files || [])) {
+        images.push({ file, url: URL.createObjectURL(file) });
+      }
+      entryImages.set(input.id, images);
+      input.value = '';
+      renderImagePreviews(input, images);
+    });
+
+    dayForms.addEventListener('click', event => {
+      const button = event.target.closest('button[data-image-action]');
+      if (!button) return;
+
+      const input = button.closest('.time-entry').querySelector('input[type="file"][id*="_img_"]');
+      const images = entryImages.get(input.id) || [];
+      const index = Number(button.dataset.imageIndex);
+      const action = button.dataset.imageAction;
+
+      if (action === 'remove') {
+        URL.revokeObjectURL(images[index].url);
+        images.splice(index, 1);
+      } else if (action === 'up' && index > 0) {
+        [images[index - 1], images[index]] = [images[index], images[index - 1]];
+      } else if (action === 'down' && index < images.length - 1) {
+        [images[index], images[index + 1]] = [images[index + 1], images[index]];
+      } else {
+        return;
+      }
+
+      entryImages.set(input.id, images);
+      renderImagePreviews(input, images);
     });
 
     function setDayName(dayIndex) {
@@ -819,9 +982,9 @@
             const entryText = getVal(`day_${dayIndex}_e${entryIndex}`);
             const descText = getVal(`day_${dayIndex}_d${entryIndex}`);
             const imgInput = document.getElementById(`day_${dayIndex}_img_${entryIndex}`);
-            const imageFile = imgInput?.files?.[0];
+            const imageFiles = entryImages.get(imgInput?.id) || [];
 
-            if (!startTime && !endTime && !entryText.trim() && !descText.trim() && !imageFile) continue;
+            if (!startTime && !endTime && !entryText.trim() && !descText.trim() && !imageFiles.length) continue;
 
             const timeLines = timeText ? wrapTextPrecise(timeText, 180, 9, helveticaFont) : [];
             const entryLines = entryText ? wrapTextPrecise(entryText, 160, 10, helveticaFont) : [];
@@ -830,22 +993,18 @@
             const entryH = entryLines.length * 14;
             const descH = descLines.length * 14;
 
-            let embeddedImg = null;
-            let imgDims = null;
-            let imgH = 0;
-
-            if (imageFile) {
-              try {
-                embeddedImg = await embedUploadedImage(pdfDoc, imageFile);
-                imgDims = embeddedImg.scaleToFit(180, 100);
-                imgH = imgDims.height + 10;
-              } catch (err) {
-                console.error(`Error loading image for day ${dayIndex + 1}, entry ${entryIndex}:`, err);
-              }
+            const embeddedImages = [];
+            for (const { file } of imageFiles) {
+              const image = await embedUploadedImage(pdfDoc, file);
+              const dimensions = {
+                width: 177,
+                height: 177 * image.height / image.width
+              };
+              embeddedImages.push({ image, dimensions });
             }
 
-            const entryTotalHeight = Math.max(timeH, entryH, descH + imgH, 45);
-            if (currentY - entryTotalHeight < PAGE_BOTTOM_LIMIT) {
+            const introHeight = Math.max(timeH, entryH, descH, 45);
+            if (currentY - introHeight < PAGE_BOTTOM_LIMIT && currentY < 700) {
               currentPage = await addCleanPage();
               currentY = 700;
             }
@@ -854,17 +1013,27 @@
             if (entryLines.length) drawLines(currentPage, 140, currentY, entryLines, 10, alignSetting, helveticaFont, 177);
             if (descLines.length) drawLines(currentPage, 335, currentY, descLines, 10, alignSetting, helveticaFont, 177);
 
-            if (embeddedImg && imgDims) {
-              const imgY = currentY - descH - imgDims.height - 5;
-              currentPage.drawImage(embeddedImg, {
-                x: 335,
-                y: imgY,
-                width: imgDims.width,
-                height: imgDims.height,
+            let imageCursorY = currentY - descH - 5;
+            for (const { image, dimensions } of embeddedImages) {
+              let imageY = imageCursorY - dimensions.height;
+              if (imageY < PAGE_BOTTOM_LIMIT) {
+                currentPage = await addCleanPage();
+                currentY = 700;
+                imageCursorY = currentY;
+                imageY = imageCursorY - dimensions.height;
+              }
+              currentPage.drawImage(image, {
+                x: 343,
+                y: imageY,
+                width: dimensions.width,
+                height: dimensions.height,
               });
+              imageCursorY = imageY - 8;
             }
 
-            currentY -= (entryTotalHeight + 15);
+            currentY = embeddedImages.length
+              ? Math.min(currentY - introHeight, imageCursorY) - 15
+              : currentY - introHeight - 15;
           }
 
           if (vals.field_date2) {
@@ -875,7 +1044,7 @@
         }
 
         let sigImage = null;
-        if (hasSignature) {
+        if (hasSignature || !signaturePad.isEmpty()) {
           const dataURL = signaturePad.toDataURL("image/png");
           const sigImageBytes = await fetch(dataURL).then(r => r.arrayBuffer());
           sigImage = await pdfDoc.embedPng(sigImageBytes);
